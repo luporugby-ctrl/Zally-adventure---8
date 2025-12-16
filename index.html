@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAC-OPS: The NotebookLM Arcade</title>
+    <title>ZAC-MAN: The NotebookLM Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-pink: #ff00ff;
+            /* Palette Zalando-ish ma Arcade */
+            --zalando-orange: #ff6900; 
             --neon-blue: #00ffff;
-            --neon-yellow: #ffff00;
-            --neon-red: #ff0000;
+            --ghost-red: #ff0000;
+            --ghost-pink: #ffb8ff;
+            --ghost-cyan: #00ffff;
             --bg-color: #111;
             --screen-bg: #000;
         }
 
         * {
             box-sizing: border-box;
-            user-select: none; /* Impedisce la selezione del testo per feeling da app */
+            user-select: none;
         }
 
         body {
@@ -26,28 +28,29 @@
             background-color: var(--bg-color);
             color: white;
             font-family: 'Press Start 2P', cursive;
-            overflow: hidden; /* Niente scrollbar */
+            overflow: hidden;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Container Principale che mantiene l'Aspect Ratio */
+        /* CABINATO ARCADE */
         #arcade-cabinet {
             width: 1024px;
             height: 768px;
             background-color: var(--screen-bg);
-            border: 20px solid #333;
+            border: 20px solid #222;
+            border-bottom: 40px solid #222; /* Più spesso sotto */
             border-radius: 20px;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2), inset 0 0 100px rgba(0,0,0,0.8);
+            box-shadow: 0 0 50px rgba(255, 105, 0, 0.2), inset 0 0 100px rgba(0,0,0,0.9);
             position: relative;
             overflow: hidden;
             transform-origin: center center;
             transition: transform 0.2s ease;
         }
 
-        /* Effetto Scanline CRT */
+        /* EFFETTO SCANLINE (Vecchio Monitor) */
         .scanlines {
             position: absolute;
             top: 0;
@@ -66,9 +69,9 @@
             z-index: 100;
         }
 
-        /* UI Elements Generali */
+        /* UI GENERALE SCHERMATE */
         .game-screen {
-            display: none; /* Nasconde tutte le schermate di default */
+            display: none;
             width: 100%;
             height: 100%;
             flex-direction: column;
@@ -79,69 +82,80 @@
             position: absolute;
             top: 0;
             left: 0;
+            background: black;
         }
 
         .active {
-            display: flex; /* Mostra la schermata attiva */
+            display: flex;
             animation: fadeIn 0.5s;
         }
 
         h1 {
-            color: var(--neon-yellow);
-            text-shadow: 4px 4px var(--neon-pink);
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
+            color: var(--zalando-orange);
+            text-shadow: 4px 4px #fff;
+            font-size: 3rem;
+            margin-bottom: 1rem;
             line-height: 1.5;
         }
+
+        h2 { color: white; margin-bottom: 30px; font-size: 1.5rem; }
 
         p {
             color: #ccc;
             line-height: 1.8;
-            font-size: 1rem;
+            font-size: 0.9rem;
             max-width: 800px;
             margin-bottom: 2rem;
         }
 
+        /* BOTTONI ARCADE */
         .btn {
             background: transparent;
-            border: 4px solid var(--neon-blue);
-            color: var(--neon-blue);
+            border: 4px solid var(--zalando-orange);
+            color: var(--zalando-orange);
             font-family: 'Press Start 2P', cursive;
             font-size: 1.2rem;
             padding: 20px 40px;
             cursor: pointer;
             text-transform: uppercase;
-            transition: all 0.2s;
-            animation: pulse 2s infinite;
+            transition: all 0.1s;
+            margin-top: 20px;
+            text-shadow: 0 0 10px var(--zalando-orange);
+            box-shadow: 0 0 10px var(--zalando-orange);
         }
 
         .btn:hover {
-            background: var(--neon-blue);
+            background: var(--zalando-orange);
             color: black;
-            box-shadow: 0 0 20px var(--neon-blue);
+            transform: scale(1.05);
         }
 
-        /* ZALLY CHARACTER - STILI */
-        .zally-container {
-            margin-bottom: 20px;
-            animation: bounce 2s infinite;
+        .btn:active { transform: scale(0.95); }
+
+        /* ZALLY CHARACTER */
+        .zally-wrapper {
+            position: relative;
+            display: inline-block;
+            transition: all 0.5s;
         }
-        
-        /* Questo è il placeholder per Zally. 
-           Quando avrai l'immagine, rimuovi background e border-radius e usa il tag img */
-        .zally-sprite {
+
+        .zally-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            /* Placeholder animazione se non c'è immagine */
+            animation: bounce 2s infinite; 
+        }
+
+        /* Se l'immagine non carica, mostra un cerchio arancione stile PacMan */
+        .zally-placeholder {
             width: 100px;
             height: 100px;
-            background-color: var(--neon-yellow); 
-            border-radius: 50%; /* Pacman style default */
-            display: inline-block;
+            background: var(--zalando-orange);
+            border-radius: 50%;
             position: relative;
-            /* Se usi un'immagine, togli il commento sotto e metti l'URL */
-            /* background-image: url('zally.png'); background-size: contain; background-repeat: no-repeat; background-color: transparent; border-radius: 0; */
         }
-        
-        /* Bocca di Pacman CSS (solo se non c'è immagine) */
-        .zally-sprite::after {
+        .zally-placeholder::after {
             content: '';
             position: absolute;
             top: 20px;
@@ -152,120 +166,110 @@
             clip-path: polygon(100% 0, 0 50%, 100% 100%);
         }
 
-        /* --- LIVELLI SPECIFICI --- */
-
-        /* Intro */
-        .coin-slot {
-            margin-top: 30px;
-            color: var(--neon-red);
-            font-size: 0.8rem;
-            animation: blink 1s infinite;
-        }
-
-        /* Level 1: Ingestion */
-        .file-zone {
+        /* GHOSTS / SOURCES */
+        .ghost-zone {
             display: flex;
-            gap: 20px;
-            margin: 40px 0;
+            justify-content: space-around;
+            width: 60%;
+            margin: 40px auto;
+            height: 120px;
+            align-items: center;
         }
-        .doc-file {
+
+        .ghost {
             width: 80px;
-            height: 100px;
-            border: 2px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        .doc-file:hover { transform: scale(1.1); border-color: var(--neon-pink); color: var(--neon-pink); }
-        .notebook-maw {
-            width: 150px;
-            height: 150px;
-            border: 4px dashed var(--neon-blue);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px auto;
-            color: var(--neon-blue);
+            height: 80px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            transition: opacity 0.3s;
+            /* Forma base fantasma CSS se mancano img */
+            background-color: transparent; 
         }
 
-        /* Level 2: Summary */
-        .ghost-container {
-            font-size: 5rem;
-            color: var(--neon-red);
-            margin: 20px;
-            transition: all 1s;
+        /* Disegno CSS Fantasmino semplice */
+        .ghost-shape {
+            width: 60px;
+            height: 70px;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 0.5rem;
+            color: black;
+            font-weight: bold;
+            padding-top: 10px;
+            animation: float 2s infinite ease-in-out;
         }
-        .summary-text {
-            display: none;
+        .ghost-shape::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: inherit;
+            clip-path: polygon(0% 0%, 20% 100%, 40% 0%, 60% 100%, 80% 0%, 100% 100%, 100% 0%);
+        }
+
+        .g-red { background: var(--ghost-red); animation-delay: 0s; }
+        .g-pink { background: var(--ghost-pink); animation-delay: 0.5s; }
+        .g-cyan { background: var(--ghost-cyan); animation-delay: 1s; }
+
+        /* AREA DI GIOCO LIVELLO 1 */
+        .maze-path {
+            width: 80%;
+            height: 150px;
+            border-top: 4px dashed #333;
+            border-bottom: 4px dashed #333;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 50px;
+            position: relative;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        /* Q&A CHAT */
+        .chat-box {
+            border: 2px solid var(--zalando-orange);
+            width: 70%;
+            padding: 20px;
+            margin-top: 20px;
             text-align: left;
             font-size: 0.8rem;
-            color: var(--neon-blue);
-            border: 2px solid var(--neon-blue);
-            padding: 20px;
-        }
-
-        /* Level 3: Q&A */
-        .chat-interface {
-            width: 80%;
-            border: 2px solid #555;
-            padding: 10px;
             background: #222;
         }
-        .chat-input {
-            width: 100%;
-            background: black;
-            border: 1px solid var(--neon-blue);
-            color: white;
-            padding: 10px;
-            font-family: 'Press Start 2P';
-            margin-top: 10px;
-        }
-        .citation-box {
+        .chat-answer {
+            color: var(--neon-blue);
+            margin-top: 15px;
             display: none;
-            margin-top: 20px;
-            color: var(--neon-yellow);
-            font-size: 0.7rem;
         }
-        .highlight { background-color: #333; padding: 2px; border: 1px solid var(--neon-pink); }
 
-        /* Level 4: Audio */
-        .visualizer {
-            display: flex;
-            gap: 5px;
-            height: 100px;
-            align-items: flex-end;
-            margin: 40px auto;
-        }
-        .bar {
-            width: 20px;
-            background-color: var(--neon-pink);
-            animation: equalizer 0.5s infinite ease-in-out;
-        }
-        .bar:nth-child(2) { animation-delay: 0.1s; background-color: var(--neon-blue); }
-        .bar:nth-child(3) { animation-delay: 0.2s; background-color: var(--neon-yellow); }
-        .bar:nth-child(4) { animation-delay: 0.3s; }
-        .bar:nth-child(5) { animation-delay: 0.1s; }
-
-        /* Animations */
-        @keyframes blink { 50% { opacity: 0; } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* ANIMAZIONI */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes equalizer { 0% { height: 20px; } 50% { height: 100px; } 100% { height: 20px; } }
-
-        /* Instructions Overlay */
-        #instructions {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.6rem;
-            color: #666;
-            z-index: 200;
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Animazione "Mangia" per Zally nel Livello 1 */
+        @keyframes moveRightEat {
+            0% { left: 0; }
+            20% { left: 20%; }
+            40% { left: 50%; }
+            60% { left: 80%; }
+            100% { left: 90%; } /* Arriva alla fine */
         }
 
     </style>
@@ -275,206 +279,221 @@
     <div id="arcade-cabinet">
         <div class="scanlines"></div>
 
-        <!-- INTRO SCREEN -->
+        <!-- --- HOME: TITLE SCREEN --- -->
         <div id="screen-intro" class="game-screen active">
-            <div class="zally-container">
-                <!-- ZALLY: Sostituisci il div sotto con <img src="zally.png" class="zally-sprite" alt="Zally"> -->
-                <div class="zally-sprite"></div> 
+            <div class="zally-wrapper">
+                <!-- IMMAGINE ZALLY: Sostituisci src="zally.png" col tuo file reale -->
+                <img src="zally.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="zally-img" alt="Zally">
+                <div class="zally-placeholder" style="display:none;"></div>
             </div>
-            <h1>PAC-OPS<br><span style="font-size: 1.5rem; color:white;">vs INFO-GHOSTS</span></h1>
-            <p>Il labirinto dei processi è pieno di fantasmi.<br>Usa NotebookLM per ripulire l'area!</p>
-            <button class="btn" onclick="nextLevel('screen-intro', 'screen-level1')">INSERT COIN</button>
-            <div class="coin-slot">PRESS BUTTON TO START</div>
+            
+            <h1>ZAC-MAN</h1>
+            <p style="color: var(--neon-blue);">THE NOTEBOOKLM EDITION</p>
+            
+            <div style="margin: 40px 0; font-size: 0.7rem; color: #888;">
+                MISSION: HELP ZALLY DIGEST THE OPS KNOWLEDGE<br>
+                AVOID INFORMATION OVERLOAD
+            </div>
+
+            <button class="btn" onclick="startGame()">INSERT COIN</button>
+            <div style="margin-top: 20px; color: var(--ghost-red); animation: blink 1s infinite; font-size: 0.8rem;">1 PLAYER ONLY</div>
         </div>
 
-        <!-- LEVEL 1: INGESTION -->
-        <div id="screen-level1" class="game-screen">
-            <h2>LEVEL 1: THE MAZE</h2>
-            <p>I documenti YF&K ti bloccano la strada!</p>
+
+        <!-- --- LIVELLO 1: INGESTION --- -->
+        <div id="screen-lvl1" class="game-screen">
+            <h2>LEVEL 1: SOURCE INGESTION</h2>
+            <p>I documenti "fantasmi" infestano il Drive.<br>Zally deve mangiarli per imparare!</p>
+
+            <div class="maze-path" id="lvl1-maze">
+                <!-- Zally starts here -->
+                <div id="zally-lvl1" style="position: absolute; left: 10px; transition: left 2s linear;">
+                    <img src="zally.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="width: 80px;" alt="Zally">
+                    <div class="zally-placeholder" style="width:60px; height:60px; display:none;"></div>
+                </div>
+
+                <!-- Ghosts/Sources -->
+                <div class="ghost-shape g-red" id="ghost1" style="position: absolute; left: 25%;">PDF</div>
+                <div class="ghost-shape g-pink" id="ghost2" style="position: absolute; left: 55%;">DOC</div>
+                <div class="ghost-shape g-cyan" id="ghost3" style="position: absolute; left: 85%;">WEB</div>
+            </div>
+
+            <div id="lvl1-controls">
+                <button class="btn" onclick="eatSources()">UPLOAD SOURCES</button>
+            </div>
             
-            <div class="file-zone">
-                <div class="doc-file" onclick="ingestFile(this)">PDF<br>Process</div>
-                <div class="doc-file" onclick="ingestFile(this)">GDoc<br>Brief</div>
-                <div class="doc-file" onclick="ingestFile(this)">Link<br>Web</div>
+            <div id="lvl1-msg" style="display:none; color: var(--neon-blue); margin-top:20px;">
+                SOURCES GROUNDED!<br>Zally is now powered up.
+                <br><br>
+                <button class="btn" style="border-color: white; color: white; font-size: 0.8rem;" onclick="nextLevel('screen-lvl1', 'screen-lvl2')">NEXT LEVEL >></button>
             </div>
-
-            <div class="notebook-maw" id="notebook-maw">
-                DROP HERE
-            </div>
-
-            <p id="l1-feedback" style="visibility: hidden; color: var(--neon-blue);">FONTI ACQUISITE!</p>
-            <button id="btn-l1" class="btn" style="display:none;" onclick="nextLevel('screen-level1', 'screen-level2')">NEXT LEVEL >></button>
         </div>
 
-        <!-- LEVEL 2: SUMMARY -->
-        <div id="screen-level2" class="game-screen">
-            <h2>LEVEL 2: GHOST BUSTING</h2>
-            <p>Appare il "Manuale Fornitori 2025" (50 Pagine)!<br>È troppo lungo da leggere!</p>
+
+        <!-- --- LIVELLO 2: SUMMARY --- -->
+        <div id="screen-lvl2" class="game-screen">
+            <h2>LEVEL 2: THE BIG SUMMARY</h2>
+            <p>Un Report Gigante (50 pagine) blocca la strada!</p>
             
-            <div class="ghost-container" id="ghost">👻</div>
-            
-            <div class="summary-text" id="summary-text">
-                > KEY TOPICS GENERATED:<br><br>
-                * Nuove penali resi<br>
-                * Deadline spostata alle 14:00<br>
-                * Aggiornamento Sustainability
+            <!-- Big Ghost -->
+            <div class="ghost-shape g-red" id="big-ghost" style="width: 150px; height: 160px; font-size: 1rem; margin: 20px auto;">
+                BIG<br>REPORT
             </div>
 
-            <button class="btn" id="btn-power" onclick="activatePowerPellet()">USA POWER PELLET (SUMMARIZE)</button>
-            <button class="btn" id="btn-l2" style="display:none; margin-top: 20px;" onclick="nextLevel('screen-level2', 'screen-level3')">NEXT LEVEL >></button>
+            <div id="summary-box" style="display:none; border: 2px dashed white; padding: 20px; color: var(--zalando-orange);">
+                > ZALLY DIGESTED THE REPORT:<br><br>
+                1. Nuovi KPI stabiliti<br>
+                2. Deadline venerdì<br>
+                3. Attenzione ai resi
+            </div>
+
+            <button id="btn-lvl2" class="btn" onclick="doSummary()">GENERATE SUMMARY</button>
+            <button id="btn-next-2" class="btn" style="display:none; border-color:white; color:white;" onclick="nextLevel('screen-lvl2', 'screen-lvl3')">NEXT >></button>
         </div>
 
-        <!-- LEVEL 3: Q&A -->
-        <div id="screen-level3" class="game-screen">
-            <h2>LEVEL 3: SNIPER SHOT</h2>
-            <p>Fornitore arrabbiato in linea!<br>"Qual è la regola sui resi danneggiati?"</p>
-            
-            <div class="chat-interface">
-                <div style="text-align: left; margin-bottom: 10px;">CHAT CON LE FONTI:</div>
-                <input type="text" class="chat-input" value="Regola resi danneggiati..." readonly>
+
+        <!-- --- LIVELLO 3: Q&A --- -->
+        <div id="screen-lvl3" class="game-screen">
+            <h2>LEVEL 3: ZALLY Q&A</h2>
+            <p>Non serve leggere tutto.<br>Fai una domanda specifica a Zally.</p>
+
+            <div class="chat-box">
+                <span style="color: #666;">USER:</span> "Qual è la policy per i resi danneggiati?"
+                
+                <div id="answer-box" class="chat-answer">
+                    <span style="color: var(--zalando-orange);">ZALLY:</span> I resi danneggiati vanno segnalati entro 48h nel portale.
+                    <br><br>
+                    <span style="background: #333; padding: 2px 5px; font-size: 0.6rem; color: white;">FONTE: Manuale Fornitori [1]</span>
+                </div>
             </div>
 
-            <div class="citation-box" id="citation-box">
-                > RISPOSTA:<br>
-                I resi danneggiati devono essere segnalati entro 48h. <br>
-                <span class="highlight">Fonte: Manuale pag. 12 [1]</span>
-            </div>
-
-            <br>
-            <button class="btn" id="btn-ask" onclick="askQuestion()">CHIEDI A ZALLY</button>
-            <button class="btn" id="btn-l3" style="display:none; margin-top: 20px;" onclick="nextLevel('screen-level3', 'screen-level4')">NEXT LEVEL >></button>
+            <button id="btn-lvl3" class="btn" onclick="doQA()">ASK ZALLY</button>
+            <button id="btn-next-3" class="btn" style="display:none; border-color:white; color:white;" onclick="nextLevel('screen-lvl3', 'screen-lvl4')">NEXT >></button>
         </div>
 
-        <!-- LEVEL 4: AUDIO -->
-        <div id="screen-level4" class="game-screen">
-            <h2>LEVEL 4: BONUS STAGE</h2>
-            <p>Sei in metro. Non puoi leggere.<br>Attiva l'Audio Overview!</p>
-            
-            <div class="visualizer" id="visualizer" style="opacity: 0.2;">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+
+        <!-- --- LIVELLO 4: AUDIO --- -->
+        <div id="screen-lvl4" class="game-screen">
+            <h2>LEVEL 4: AUDIO PODCAST</h2>
+            <p>Sei in viaggio? Trasforma i documenti in un Podcast.</p>
+
+            <div style="display:flex; justify-content:center; align-items:flex-end; height: 100px; gap:10px; margin-bottom: 30px;">
+                <div class="bar" style="width:20px; background:var(--zalando-orange); height: 20px;"></div>
+                <div class="bar" style="width:20px; background:white; height: 20px;"></div>
+                <div class="bar" style="width:20px; background:var(--zalando-orange); height: 20px;"></div>
+                <div class="bar" style="width:20px; background:white; height: 20px;"></div>
             </div>
 
-            <button class="btn" id="btn-audio" onclick="playAudio()">PLAY PODCAST 🎧</button>
-            <button class="btn" id="btn-l4" style="display:none; margin-top: 20px;" onclick="nextLevel('screen-level4', 'screen-end')">FINISH</button>
+            <button id="btn-lvl4" class="btn" onclick="doAudio()">PLAY AUDIO OVERVIEW</button>
+            <button id="btn-next-4" class="btn" style="display:none; border-color:white; color:white;" onclick="nextLevel('screen-lvl4', 'screen-end')">FINISH</button>
         </div>
 
-        <!-- END SCREEN -->
+
+        <!-- --- END GAME --- -->
         <div id="screen-end" class="game-screen">
-            <h1 style="color: var(--neon-pink);">HIGH SCORE!</h1>
-            <div class="zally-container">
-                <div class="zally-sprite"></div>
+            <h1 style="color: var(--neon-blue);">YOU WIN!</h1>
+            <div class="zally-wrapper">
+                <img src="zally.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="zally-img" alt="Zally">
+                <div class="zally-placeholder" style="display:none;"></div>
             </div>
-            <p>HAI DOMATO IL LABIRINTO!</p>
-            <p style="font-size: 0.8rem; color: white;">Challenge completata.<br>Ora tocca a te usare NotebookLM sui ticket reali.</p>
+            <p>Zally ha mangiato tutti i documenti complessi.<br>Ora sei pronto per usare NotebookLM.</p>
             
-            <div style="border: 2px solid white; padding: 20px; margin-top: 20px;">
-                <p>Inserisci le tue iniziali:</p>
-                <span style="font-size: 2rem; letter-spacing: 10px; color: var(--neon-yellow);">YF&K</span>
+            <div style="margin-top: 30px; font-size: 0.7rem;">
+                GAME DESIGNED BY<br>
+                <span style="color: var(--zalando-orange); font-size: 1rem;">GEMINI CHAMPION YF&K</span>
             </div>
-            
-            <br>
-            <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
+
+            <button class="btn" onclick="location.reload()">REPLAY</button>
         </div>
 
-        <div id="instructions">ZOOM AUTOMATICO ATTIVO - CREATED BY GEMINI CHAMPION</div>
+        <div style="position: absolute; bottom: 10px; color: #444; font-size: 0.6rem;">ZAC-MAN v1.0 • INSERT COIN TO LEARN</div>
+
     </div>
 
     <script>
-        // --- GESTIONE ZOOM/RISOLUZIONE ---
-        // Questa funzione adatta il gioco alla finestra del browser
+        // --- GAME LOGIC ---
+
+        // 1. Zoom Automatico (Responsive)
         function resizeGame() {
-            const gameContainer = document.getElementById('arcade-cabinet');
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            
-            // Dimensioni base del gioco
-            const baseWidth = 1024;
-            const baseHeight = 768;
-
-            // Calcola il fattore di scala (mantiene margine del 5%)
-            const scaleX = (windowWidth * 0.95) / baseWidth;
-            const scaleY = (windowHeight * 0.95) / baseHeight;
-            const scale = Math.min(scaleX, scaleY);
-
-            gameContainer.style.transform = `scale(${scale})`;
+            const cabinet = document.getElementById('arcade-cabinet');
+            const scale = Math.min(
+                window.innerWidth / 1024,
+                window.innerHeight / 768
+            ) * 0.95; // 95% margin
+            cabinet.style.transform = `scale(${scale})`;
         }
-
         window.addEventListener('resize', resizeGame);
         window.addEventListener('load', resizeGame);
 
-
-        // --- LOGICA DI GIOCO ---
-
-        function nextLevel(currentId, nextId) {
-            document.getElementById(currentId).classList.remove('active');
-            document.getElementById(nextId).classList.add('active');
+        // 2. Navigation
+        function nextLevel(fromId, toId) {
+            document.getElementById(fromId).classList.remove('active');
+            document.getElementById(toId).classList.add('active');
         }
 
-        // Level 1 Logic
-        let filesIngested = 0;
-        function ingestFile(element) {
-            element.style.opacity = '0';
-            element.style.pointerEvents = 'none';
-            filesIngested++;
-            
-            // Animazione "mangia file"
-            const maw = document.getElementById('notebook-maw');
-            maw.style.borderColor = 'var(--neon-pink)';
-            setTimeout(() => maw.style.borderColor = 'var(--neon-blue)', 200);
-
-            if (filesIngested === 3) {
-                document.getElementById('l1-feedback').style.visibility = 'visible';
-                document.getElementById('btn-l1').style.display = 'inline-block';
-            }
+        function startGame() {
+            nextLevel('screen-intro', 'screen-lvl1');
         }
 
-        // Level 2 Logic
-        function activatePowerPellet() {
-            const ghost = document.getElementById('ghost');
-            const summary = document.getElementById('summary-text');
-            const btn = document.getElementById('btn-power');
+        // 3. Level 1: Ingestion Animation
+        function eatSources() {
+            const zally = document.getElementById('zally-lvl1');
+            const btn = document.querySelector('#lvl1-controls .btn');
             
-            // Ghost scappa/scompare
-            ghost.style.transform = 'scale(0)';
+            btn.style.display = 'none'; // Hide button
+            
+            // Move Zally
+            zally.style.left = "90%";
+            
+            // Hide ghosts as Zally passes them
+            setTimeout(() => document.getElementById('ghost1').style.opacity = '0', 600);
+            setTimeout(() => document.getElementById('ghost2').style.opacity = '0', 1200);
+            setTimeout(() => document.getElementById('ghost3').style.opacity = '0', 1800);
+
+            // Show Success
+            setTimeout(() => {
+                document.getElementById('lvl1-msg').style.display = 'block';
+            }, 2100);
+        }
+
+        // 4. Level 2: Summary
+        function doSummary() {
+            const ghost = document.getElementById('big-ghost');
+            const box = document.getElementById('summary-box');
+            
+            ghost.style.transform = "scale(0.1) rotate(360deg)";
+            ghost.style.opacity = "0";
+            
             setTimeout(() => {
                 ghost.style.display = 'none';
-                summary.style.display = 'block'; // Mostra sommario
-                summary.classList.add('active'); // fade in
-                
-                btn.style.display = 'none';
-                document.getElementById('btn-l2').style.display = 'inline-block';
-            }, 500);
-        }
-
-        // Level 3 Logic
-        function askQuestion() {
-            const btn = document.getElementById('btn-ask');
-            const box = document.getElementById('citation-box');
-            
-            btn.innerHTML = "ANALYZING...";
-            setTimeout(() => {
-                btn.style.display = 'none';
                 box.style.display = 'block';
-                box.classList.add('active');
-                document.getElementById('btn-l3').style.display = 'inline-block';
-            }, 1000);
+                document.getElementById('btn-lvl2').style.display = 'none';
+                document.getElementById('btn-next-2').style.display = 'inline-block';
+            }, 800);
         }
 
-        // Level 4 Logic
-        function playAudio() {
-            const viz = document.getElementById('visualizer');
-            const btn = document.getElementById('btn-audio');
-            
-            viz.style.opacity = '1';
-            btn.innerHTML = "PLAYING...";
+        // 5. Level 3: Q&A
+        function doQA() {
+            const btn = document.getElementById('btn-lvl3');
+            btn.innerHTML = "ZALLY THINKING...";
             
             setTimeout(() => {
-                document.getElementById('btn-l4').style.display = 'inline-block';
+                btn.style.display = 'none';
+                document.getElementById('answer-box').style.display = 'block';
+                document.getElementById('btn-next-3').style.display = 'inline-block';
             }, 1500);
+        }
+
+        // 6. Level 4: Audio
+        function doAudio() {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach((bar, index) => {
+                // Simple CSS animation via JS toggle or simple style
+                bar.style.animation = `bounce 0.5s infinite alternate ${index * 0.1}s`;
+            });
+            
+            document.getElementById('btn-lvl4').style.display = 'none';
+            document.getElementById('btn-next-4').style.display = 'inline-block';
         }
 
     </script>
