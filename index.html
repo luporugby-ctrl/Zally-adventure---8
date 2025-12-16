@@ -2,500 +2,541 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZAC-MAN: The NotebookLM Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZAC-MAN: Operations Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Palette Zalando-ish ma Arcade */
-            --zalando-orange: #ff6900; 
-            --neon-blue: #00ffff;
-            --ghost-red: #ff0000;
-            --ghost-pink: #ffb8ff;
-            --ghost-cyan: #00ffff;
+            --zalando-orange: #ff6900;
+            --wall-color: #2c3e50; /* Blu scuro */
             --bg-color: #111;
-            --screen-bg: #000;
-        }
-
-        * {
-            box-sizing: border-box;
-            user-select: none;
+            --text-color: #fff;
         }
 
         body {
+            background-color: #222;
+            color: var(--text-color);
+            font-family: 'Press Start 2P', cursive;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            color: white;
-            font-family: 'Press Start 2P', cursive;
             overflow: hidden;
-            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            touch-action: none; /* Disabilita zoom su doppio tocco */
         }
 
-        /* CABINATO ARCADE */
-        #arcade-cabinet {
-            width: 1024px;
-            height: 768px;
-            background-color: var(--screen-bg);
-            border: 20px solid #222;
-            border-bottom: 40px solid #222; /* Più spesso sotto */
-            border-radius: 20px;
-            box-shadow: 0 0 50px rgba(255, 105, 0, 0.2), inset 0 0 100px rgba(0,0,0,0.9);
+        #game-container {
             position: relative;
-            overflow: hidden;
-            transform-origin: center center;
-            transition: transform 0.2s ease;
+            width: 100vmin; /* Quadrato basato sul lato più corto */
+            height: 100vmin;
+            max-width: 800px;
+            max-height: 800px;
+            background: #000;
+            border: 4px solid var(--zalando-orange);
+            box-shadow: 0 0 20px rgba(255, 105, 0, 0.5);
         }
 
-        /* EFFETTO SCANLINE (Vecchio Monitor) */
-        .scanlines {
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* UI OVERLAY (Menu, Messaggi) */
+        .overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.2) 50%,
-                rgba(0,0,0,0.2)
-            );
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        /* UI GENERALE SCHERMATE */
-        .game-screen {
-            display: none;
-            width: 100%;
-            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 40px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: black;
-        }
-
-        .active {
-            display: flex;
-            animation: fadeIn 0.5s;
-        }
-
-        h1 {
-            color: var(--zalando-orange);
-            text-shadow: 4px 4px #fff;
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-
-        h2 { color: white; margin-bottom: 30px; font-size: 1.5rem; }
-
-        p {
-            color: #ccc;
-            line-height: 1.8;
-            font-size: 0.9rem;
-            max-width: 800px;
-            margin-bottom: 2rem;
-        }
-
-        /* BOTTONI ARCADE */
-        .btn {
-            background: transparent;
-            border: 4px solid var(--zalando-orange);
-            color: var(--zalando-orange);
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.2rem;
-            padding: 20px 40px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.1s;
-            margin-top: 20px;
-            text-shadow: 0 0 10px var(--zalando-orange);
-            box-shadow: 0 0 10px var(--zalando-orange);
-        }
-
-        .btn:hover {
-            background: var(--zalando-orange);
-            color: black;
-            transform: scale(1.05);
-        }
-
-        .btn:active { transform: scale(0.95); }
-
-        /* ZALLY CHARACTER */
-        .zally-wrapper {
-            position: relative;
-            display: inline-block;
-            transition: all 0.5s;
-        }
-
-        .zally-img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            /* Placeholder animazione se non c'è immagine */
-            animation: bounce 2s infinite; 
-        }
-
-        /* Se l'immagine non carica, mostra un cerchio arancione stile PacMan */
-        .zally-placeholder {
-            width: 100px;
-            height: 100px;
-            background: var(--zalando-orange);
-            border-radius: 50%;
-            position: relative;
-        }
-        .zally-placeholder::after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            right: 0;
-            width: 40px;
-            height: 40px;
-            background: black;
-            clip-path: polygon(100% 0, 0 50%, 100% 100%);
-        }
-
-        /* GHOSTS / SOURCES */
-        .ghost-zone {
-            display: flex;
-            justify-content: space-around;
-            width: 60%;
-            margin: 40px auto;
-            height: 120px;
-            align-items: center;
-        }
-
-        .ghost {
-            width: 80px;
-            height: 80px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            position: relative;
-            transition: opacity 0.3s;
-            /* Forma base fantasma CSS se mancano img */
-            background-color: transparent; 
-        }
-
-        /* Disegno CSS Fantasmino semplice */
-        .ghost-shape {
-            width: 60px;
-            height: 70px;
-            border-top-left-radius: 30px;
-            border-top-right-radius: 30px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            font-size: 0.5rem;
-            color: black;
-            font-weight: bold;
-            padding-top: 10px;
-            animation: float 2s infinite ease-in-out;
-        }
-        .ghost-shape::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 15px;
-            background: inherit;
-            clip-path: polygon(0% 0%, 20% 100%, 40% 0%, 60% 100%, 80% 0%, 100% 100%, 100% 0%);
-        }
-
-        .g-red { background: var(--ghost-red); animation-delay: 0s; }
-        .g-pink { background: var(--ghost-pink); animation-delay: 0.5s; }
-        .g-cyan { background: var(--ghost-cyan); animation-delay: 1s; }
-
-        /* AREA DI GIOCO LIVELLO 1 */
-        .maze-path {
-            width: 80%;
-            height: 150px;
-            border-top: 4px dashed #333;
-            border-bottom: 4px dashed #333;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 50px;
-            position: relative;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        /* Q&A CHAT */
-        .chat-box {
-            border: 2px solid var(--zalando-orange);
-            width: 70%;
+            z-index: 10;
             padding: 20px;
-            margin-top: 20px;
-            text-align: left;
-            font-size: 0.8rem;
-            background: #222;
-        }
-        .chat-answer {
-            color: var(--neon-blue);
-            margin-top: 15px;
-            display: none;
         }
 
-        /* ANIMAZIONI */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes blink { 50% { opacity: 0; } }
+        .hidden { display: none !important; }
+
+        h1 { color: var(--zalando-orange); font-size: 3rem; margin-bottom: 10px; text-shadow: 4px 4px #fff; }
+        h2 { font-size: 1.5rem; color: #00ffff; margin-bottom: 20px; }
+        p { line-height: 1.5; font-size: 0.8rem; color: #ccc; margin-bottom: 30px; max-width: 600px; }
         
-        /* Animazione "Mangia" per Zally nel Livello 1 */
-        @keyframes moveRightEat {
-            0% { left: 0; }
-            20% { left: 20%; }
-            40% { left: 50%; }
-            60% { left: 80%; }
-            100% { left: 90%; } /* Arriva alla fine */
+        button {
+            background: var(--zalando-orange);
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Press Start 2P';
+            font-size: 1rem;
+            cursor: pointer;
+            color: #000;
+            transition: transform 0.1s;
         }
+        button:active { transform: scale(0.95); }
 
+        /* Mobile Controls */
+        #mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: none; /* Attivato via JS se mobile */
+            justify-content: center;
+            gap: 20px;
+            z-index: 5;
+            pointer-events: none; /* Lascia passare i click al canvas se necessario */
+        }
+        .d-pad-btn {
+            pointer-events: auto;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            user-select: none;
+        }
+        .d-pad-btn:active { background: rgba(255, 105, 0, 0.5); }
+
+        /* Scanline effect */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
     </style>
 </head>
 <body>
 
-    <div id="arcade-cabinet">
-        <div class="scanlines"></div>
+<div id="game-container">
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    <div class="scanlines"></div>
 
-        <!-- --- HOME: TITLE SCREEN --- -->
-        <div id="screen-intro" class="game-screen active">
-            <div class="zally-wrapper">
-                <!-- IMMAGINE ZALLY: Sostituisci src="zally.png" col tuo file reale -->
-                <img src="zally.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="zally-img" alt="Zally">
-                <div class="zally-placeholder" style="display:none;"></div>
-            </div>
-            
-            <h1>ZAC-MAN</h1>
-            <p style="color: var(--neon-blue);">THE NOTEBOOKLM EDITION</p>
-            
-            <div style="margin: 40px 0; font-size: 0.7rem; color: #888;">
-                MISSION: HELP ZALLY DIGEST THE OPS KNOWLEDGE<br>
-                AVOID INFORMATION OVERLOAD
-            </div>
-
-            <button class="btn" onclick="startGame()">INSERT COIN</button>
-            <div style="margin-top: 20px; color: var(--ghost-red); animation: blink 1s infinite; font-size: 0.8rem;">1 PLAYER ONLY</div>
+    <!-- START SCREEN -->
+    <div id="start-screen" class="overlay">
+        <h1 style="font-size: 4vw;">ZAC-MAN</h1>
+        <p>OPERATIONS EDITION</p>
+        <div style="margin: 20px;">
+            <img src="zally.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 80px; height: 80px; border-radius: 50%; animation: bounce 1s infinite alternate;">
         </div>
-
-
-        <!-- --- LIVELLO 1: INGESTION --- -->
-        <div id="screen-lvl1" class="game-screen">
-            <h2>LEVEL 1: SOURCE INGESTION</h2>
-            <p>I documenti "fantasmi" infestano il Drive.<br>Zally deve mangiarli per imparare!</p>
-
-            <div class="maze-path" id="lvl1-maze">
-                <!-- Zally starts here -->
-                <div id="zally-lvl1" style="position: absolute; left: 10px; transition: left 2s linear;">
-                    <img src="zally.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" style="width: 80px;" alt="Zally">
-                    <div class="zally-placeholder" style="width:60px; height:60px; display:none;"></div>
-                </div>
-
-                <!-- Ghosts/Sources -->
-                <div class="ghost-shape g-red" id="ghost1" style="position: absolute; left: 25%;">PDF</div>
-                <div class="ghost-shape g-pink" id="ghost2" style="position: absolute; left: 55%;">DOC</div>
-                <div class="ghost-shape g-cyan" id="ghost3" style="position: absolute; left: 85%;">WEB</div>
-            </div>
-
-            <div id="lvl1-controls">
-                <button class="btn" onclick="eatSources()">UPLOAD SOURCES</button>
-            </div>
-            
-            <div id="lvl1-msg" style="display:none; color: var(--neon-blue); margin-top:20px;">
-                SOURCES GROUNDED!<br>Zally is now powered up.
-                <br><br>
-                <button class="btn" style="border-color: white; color: white; font-size: 0.8rem;" onclick="nextLevel('screen-lvl1', 'screen-lvl2')">NEXT LEVEL >></button>
-            </div>
-        </div>
-
-
-        <!-- --- LIVELLO 2: SUMMARY --- -->
-        <div id="screen-lvl2" class="game-screen">
-            <h2>LEVEL 2: THE BIG SUMMARY</h2>
-            <p>Un Report Gigante (50 pagine) blocca la strada!</p>
-            
-            <!-- Big Ghost -->
-            <div class="ghost-shape g-red" id="big-ghost" style="width: 150px; height: 160px; font-size: 1rem; margin: 20px auto;">
-                BIG<br>REPORT
-            </div>
-
-            <div id="summary-box" style="display:none; border: 2px dashed white; padding: 20px; color: var(--zalando-orange);">
-                > ZALLY DIGESTED THE REPORT:<br><br>
-                1. Nuovi KPI stabiliti<br>
-                2. Deadline venerdì<br>
-                3. Attenzione ai resi
-            </div>
-
-            <button id="btn-lvl2" class="btn" onclick="doSummary()">GENERATE SUMMARY</button>
-            <button id="btn-next-2" class="btn" style="display:none; border-color:white; color:white;" onclick="nextLevel('screen-lvl2', 'screen-lvl3')">NEXT >></button>
-        </div>
-
-
-        <!-- --- LIVELLO 3: Q&A --- -->
-        <div id="screen-lvl3" class="game-screen">
-            <h2>LEVEL 3: ZALLY Q&A</h2>
-            <p>Non serve leggere tutto.<br>Fai una domanda specifica a Zally.</p>
-
-            <div class="chat-box">
-                <span style="color: #666;">USER:</span> "Qual è la policy per i resi danneggiati?"
-                
-                <div id="answer-box" class="chat-answer">
-                    <span style="color: var(--zalando-orange);">ZALLY:</span> I resi danneggiati vanno segnalati entro 48h nel portale.
-                    <br><br>
-                    <span style="background: #333; padding: 2px 5px; font-size: 0.6rem; color: white;">FONTE: Manuale Fornitori [1]</span>
-                </div>
-            </div>
-
-            <button id="btn-lvl3" class="btn" onclick="doQA()">ASK ZALLY</button>
-            <button id="btn-next-3" class="btn" style="display:none; border-color:white; color:white;" onclick="nextLevel('screen-lvl3', 'screen-lvl4')">NEXT >></button>
-        </div>
-
-
-        <!-- --- LIVELLO 4: AUDIO --- -->
-        <div id="screen-lvl4" class="game-screen">
-            <h2>LEVEL 4: AUDIO PODCAST</h2>
-            <p>Sei in viaggio? Trasforma i documenti in un Podcast.</p>
-
-            <div style="display:flex; justify-content:center; align-items:flex-end; height: 100px; gap:10px; margin-bottom: 30px;">
-                <div class="bar" style="width:20px; background:var(--zalando-orange); height: 20px;"></div>
-                <div class="bar" style="width:20px; background:white; height: 20px;"></div>
-                <div class="bar" style="width:20px; background:var(--zalando-orange); height: 20px;"></div>
-                <div class="bar" style="width:20px; background:white; height: 20px;"></div>
-            </div>
-
-            <button id="btn-lvl4" class="btn" onclick="doAudio()">PLAY AUDIO OVERVIEW</button>
-            <button id="btn-next-4" class="btn" style="display:none; border-color:white; color:white;" onclick="nextLevel('screen-lvl4', 'screen-end')">FINISH</button>
-        </div>
-
-
-        <!-- --- END GAME --- -->
-        <div id="screen-end" class="game-screen">
-            <h1 style="color: var(--neon-blue);">YOU WIN!</h1>
-            <div class="zally-wrapper">
-                <img src="zally.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="zally-img" alt="Zally">
-                <div class="zally-placeholder" style="display:none;"></div>
-            </div>
-            <p>Zally ha mangiato tutti i documenti complessi.<br>Ora sei pronto per usare NotebookLM.</p>
-            
-            <div style="margin-top: 30px; font-size: 0.7rem;">
-                GAME DESIGNED BY<br>
-                <span style="color: var(--zalando-orange); font-size: 1rem;">GEMINI CHAMPION YF&K</span>
-            </div>
-
-            <button class="btn" onclick="location.reload()">REPLAY</button>
-        </div>
-
-        <div style="position: absolute; bottom: 10px; color: #444; font-size: 0.6rem;">ZAC-MAN v1.0 • INSERT COIN TO LEARN</div>
-
+        <p>I documenti Ops sono ovunque!<br>Aiuta Zally a "mangiare" le fonti per caricarle su NotebookLM.</p>
+        <button onclick="startGame()">START GAME</button>
+        <p style="margin-top:20px; font-size: 0.6rem; color:#666;">USA LE FRECCE PER MUOVERTI</p>
     </div>
 
-    <script>
-        // --- GAME LOGIC ---
+    <!-- LEVEL COMPLETE SCREEN -->
+    <div id="level-screen" class="overlay hidden">
+        <h2 id="level-title">LEVEL CLEARED!</h2>
+        <p id="level-msg">Sources ingested.</p>
+        <div id="notebook-visual" style="border: 2px dashed #00ffff; padding: 20px; margin-bottom: 20px; color: #00ffff;">
+            Analyzing...
+        </div>
+        <button onclick="nextLevel()">NEXT LEVEL</button>
+    </div>
 
-        // 1. Zoom Automatico (Responsive)
-        function resizeGame() {
-            const cabinet = document.getElementById('arcade-cabinet');
-            const scale = Math.min(
-                window.innerWidth / 1024,
-                window.innerHeight / 768
-            ) * 0.95; // 95% margin
-            cabinet.style.transform = `scale(${scale})`;
+    <!-- GAME OVER SCREEN -->
+    <div id="gameover-screen" class="overlay hidden">
+        <h1 style="color: red;">GAME OVER</h1>
+        <p>Troppi documenti!<br>Hai perso il focus.</p>
+        <button onclick="location.reload()">TRY AGAIN</button>
+    </div>
+    
+    <!-- VICTORY SCREEN -->
+    <div id="victory-screen" class="overlay hidden">
+        <h1 style="color: #00ffff;">YOU WIN!</h1>
+        <p>Hai domato il caos operativo con NotebookLM.</p>
+        <p>Ora sei pronto per usare le tue skill nel lavoro quotidiano.</p>
+        <button onclick="location.reload()">REPLAY</button>
+    </div>
+
+    <!-- MOBILE CONTROLS -->
+    <div id="mobile-controls">
+        <div class="d-pad-btn" ontouchstart="handleTouch('up')" onmousedown="handleTouch('up')">▲</div>
+        <div style="display:flex; gap:60px;">
+            <div class="d-pad-btn" ontouchstart="handleTouch('left')" onmousedown="handleTouch('left')">◀</div>
+            <div class="d-pad-btn" ontouchstart="handleTouch('right')" onmousedown="handleTouch('right')">▶</div>
+        </div>
+        <div class="d-pad-btn" ontouchstart="handleTouch('down')" onmousedown="handleTouch('down')">▼</div>
+    </div>
+</div>
+
+<script>
+/**
+ * ZAC-MAN GAME ENGINE
+ * Un clone semplificato di Pac-Man
+ */
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// --- GAME STATE ---
+let gameState = 'start'; // start, playing, level_transition, gameover, victory
+let currentLevel = 1;
+let score = 0;
+let animationId;
+
+// --- CONFIG ---
+const TILE_SIZE = 30; // Dimensione griglia base (sarà scalata)
+const COLS = 20;
+const ROWS = 20;
+let SCALE = 1; // Fattore di scala dinamico
+
+// --- ASSETS ---
+// Immagini generate via codice (SVG data URI) se non presenti
+const zallyImg = new Image();
+zallyImg.src = 'zally.png'; // Proverà a caricare zally.png
+// Fallback se l'immagine non c'è: disegneremo un cerchio nel render
+
+// --- MAPPA (1 = Muro, 0 = Vuoto) ---
+// Una mappa semplice simmetrica
+const mapDesign = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1,1,0,1,0,1,1,0,1,1,1,0,0,1],
+    [1,0,1,1,1,0,1,1,0,1,0,1,1,0,1,1,1,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1,1,0,1],
+    [1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    [1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,0,1,1,1,1],
+    [1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
+    [1,0,1,1,0,1,0,1,1,0,0,1,0,1,0,1,1,0,0,1], // Centro (Box Fantasmi sarebbe qui)
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,0,1,0,1,1,1,1,1,1,0,1,0,1,1,0,1],
+    [1,0,0,1,0,1,0,0,0,1,0,0,0,0,1,0,1,0,0,1],
+    [1,1,0,1,0,1,1,1,0,1,0,1,1,1,1,0,1,0,1,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1,1,0,1,0,1,1,0,1,1,1,0,0,1],
+    [1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    [1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+// --- ENTITIES ---
+let player = { x: 1, y: 1, dirX: 0, dirY: 0, nextDirX: 0, nextDirY: 0, speed: 0.15, angle: 0 };
+let ghosts = [];
+
+// Tipi di fantasmi (Fonti)
+const GHOST_TYPES = [
+    { name: "PDF", color: "#e74c3c", label: "PDF" },
+    { name: "DOC", color: "#3498db", label: "DOC" },
+    { name: "WEB", color: "#2ecc71", label: "WEB" },
+    { name: "MAIL", color: "#f1c40f", label: "@" }
+];
+
+function initLevel(level) {
+    // Reset player
+    player.x = 1;
+    player.y = 1;
+    player.dirX = 0; 
+    player.dirY = 0;
+    player.nextDirX = 0;
+    player.nextDirY = 0;
+
+    // Create ghosts based on level
+    ghosts = [];
+    let count = 2 + level; // Livello 1 = 3 fantasmi, Livello 2 = 4, ecc.
+    
+    // Trova posizioni libere per i fantasmi
+    for (let i = 0; i < count; i++) {
+        let placed = false;
+        while (!placed) {
+            let rx = Math.floor(Math.random() * COLS);
+            let ry = Math.floor(Math.random() * ROWS);
+            // Non spawnare troppo vicino al player o sui muri
+            if (mapDesign[ry][rx] === 0 && (Math.abs(rx - player.x) > 5 || Math.abs(ry - player.y) > 5)) {
+                let type = GHOST_TYPES[i % GHOST_TYPES.length];
+                ghosts.push({
+                    x: rx, 
+                    y: ry, 
+                    type: type,
+                    dirX: 0,
+                    dirY: 0,
+                    speed: 0.08 + (level * 0.01), // Più veloci ogni livello
+                    targetX: rx, // Per movimento fluido
+                    targetY: ry
+                });
+                placed = true;
+            }
         }
-        window.addEventListener('resize', resizeGame);
-        window.addEventListener('load', resizeGame);
+    }
+}
 
-        // 2. Navigation
-        function nextLevel(fromId, toId) {
-            document.getElementById(fromId).classList.remove('active');
-            document.getElementById(toId).classList.add('active');
+// --- CONTROLS ---
+window.addEventListener('keydown', (e) => {
+    if (gameState !== 'playing') return;
+    switch(e.key) {
+        case 'ArrowUp': player.nextDirX = 0; player.nextDirY = -1; break;
+        case 'ArrowDown': player.nextDirX = 0; player.nextDirY = 1; break;
+        case 'ArrowLeft': player.nextDirX = -1; player.nextDirY = 0; break;
+        case 'ArrowRight': player.nextDirX = 1; player.nextDirY = 0; break;
+    }
+});
+
+function handleTouch(dir) {
+    if (gameState !== 'playing') return;
+    if (dir === 'up') { player.nextDirX = 0; player.nextDirY = -1; }
+    if (dir === 'down') { player.nextDirX = 0; player.nextDirY = 1; }
+    if (dir === 'left') { player.nextDirX = -1; player.nextDirY = 0; }
+    if (dir === 'right') { player.nextDirX = 1; player.nextDirY = 0; }
+}
+
+// --- GAME LOGIC ---
+
+function isWall(x, y) {
+    // Gestione bordi array
+    if (y < 0 || y >= ROWS || x < 0 || x >= COLS) return true;
+    return mapDesign[Math.floor(y)][Math.floor(x)] === 1;
+}
+
+function update() {
+    if (gameState !== 'playing') return;
+
+    // 1. PLAYER MOVEMENT
+    // Allineamento alla griglia per girare
+    const centerX = Math.floor(player.x + 0.5);
+    const centerY = Math.floor(player.y + 0.5);
+    const dist = Math.abs(player.x - centerX) + Math.abs(player.y - centerY);
+
+    // Se siamo "quasi" al centro della casella, possiamo cambiare direzione
+    if (dist < 0.1) {
+        // Prova a prendere la nuova direzione
+        if (player.nextDirX !== 0 || player.nextDirY !== 0) {
+            if (!isWall(centerX + player.nextDirX, centerY + player.nextDirY)) {
+                player.x = centerX;
+                player.y = centerY;
+                player.dirX = player.nextDirX;
+                player.dirY = player.nextDirY;
+                player.nextDirX = 0;
+                player.nextDirY = 0;
+            }
         }
-
-        function startGame() {
-            nextLevel('screen-intro', 'screen-lvl1');
+        // Se andiamo contro un muro, fermati
+        if (isWall(centerX + player.dirX, centerY + player.dirY)) {
+            player.dirX = 0;
+            player.dirY = 0;
         }
+    }
 
-        // 3. Level 1: Ingestion Animation
-        function eatSources() {
-            const zally = document.getElementById('zally-lvl1');
-            const btn = document.querySelector('#lvl1-controls .btn');
-            
-            btn.style.display = 'none'; // Hide button
-            
-            // Move Zally
-            zally.style.left = "90%";
-            
-            // Hide ghosts as Zally passes them
-            setTimeout(() => document.getElementById('ghost1').style.opacity = '0', 600);
-            setTimeout(() => document.getElementById('ghost2').style.opacity = '0', 1200);
-            setTimeout(() => document.getElementById('ghost3').style.opacity = '0', 1800);
+    player.x += player.dirX * player.speed;
+    player.y += player.dirY * player.speed;
 
-            // Show Success
-            setTimeout(() => {
-                document.getElementById('lvl1-msg').style.display = 'block';
-            }, 2100);
+    // Rotazione visiva
+    if (player.dirX === 1) player.angle = 0;
+    if (player.dirX === -1) player.angle = Math.PI;
+    if (player.dirY === -1) player.angle = -Math.PI/2;
+    if (player.dirY === 1) player.angle = Math.PI/2;
+
+
+    // 2. GHOST MOVEMENT (Random Wandering)
+    ghosts.forEach(ghost => {
+        // Movimento semplificato: se sei al centro, scegli direzione random valida
+        const gCenterX = Math.floor(ghost.x + 0.5);
+        const gCenterY = Math.floor(ghost.y + 0.5);
+        const gDist = Math.abs(ghost.x - gCenterX) + Math.abs(ghost.y - gCenterY);
+
+        if (gDist < 0.1) {
+            ghost.x = gCenterX; // Snap
+            ghost.y = gCenterY;
+
+            // Scegli direzione: 80% mantieni, 20% cambia, o cambia se muro
+            let possibleDirs = [];
+            if (!isWall(ghost.x+1, ghost.y)) possibleDirs.push({x:1, y:0});
+            if (!isWall(ghost.x-1, ghost.y)) possibleDirs.push({x:-1, y:0});
+            if (!isWall(ghost.x, ghost.y+1)) possibleDirs.push({x:0, y:1});
+            if (!isWall(ghost.x, ghost.y-1)) possibleDirs.push({x:0, y:-1});
+
+            // Evita inversione a U se possibile
+            const filteredDirs = possibleDirs.filter(d => d.x !== -ghost.dirX || d.y !== -ghost.dirY);
+            
+            if (filteredDirs.length > 0 && Math.random() > 0.1) {
+                // Scegli tra quelle non inverse
+                const choice = filteredDirs[Math.floor(Math.random() * filteredDirs.length)];
+                ghost.dirX = choice.x;
+                ghost.dirY = choice.y;
+            } else if (possibleDirs.length > 0) {
+                 // Scegli a caso
+                const choice = possibleDirs[Math.floor(Math.random() * possibleDirs.length)];
+                ghost.dirX = choice.x;
+                ghost.dirY = choice.y;
+            }
         }
+        
+        // Fuga da Zally? No, in questa versione Zally li insegue, loro vagano.
+        // Se volessimo farli scappare: calcolare vettore opposto al player.
+        
+        ghost.x += ghost.dirX * ghost.speed;
+        ghost.y += ghost.dirY * ghost.speed;
+    });
 
-        // 4. Level 2: Summary
-        function doSummary() {
-            const ghost = document.getElementById('big-ghost');
-            const box = document.getElementById('summary-box');
-            
-            ghost.style.transform = "scale(0.1) rotate(360deg)";
-            ghost.style.opacity = "0";
-            
-            setTimeout(() => {
-                ghost.style.display = 'none';
-                box.style.display = 'block';
-                document.getElementById('btn-lvl2').style.display = 'none';
-                document.getElementById('btn-next-2').style.display = 'inline-block';
-            }, 800);
+
+    // 3. COLLISION (Eating Ghosts)
+    for (let i = ghosts.length - 1; i >= 0; i--) {
+        const g = ghosts[i];
+        const dx = player.x - g.x;
+        const dy = player.y - g.y;
+        if (Math.sqrt(dx*dx + dy*dy) < 0.8) {
+            // EAT GHOST
+            ghosts.splice(i, 1);
+            score += 100;
         }
+    }
 
-        // 5. Level 3: Q&A
-        function doQA() {
-            const btn = document.getElementById('btn-lvl3');
-            btn.innerHTML = "ZALLY THINKING...";
-            
-            setTimeout(() => {
-                btn.style.display = 'none';
-                document.getElementById('answer-box').style.display = 'block';
-                document.getElementById('btn-next-3').style.display = 'inline-block';
-            }, 1500);
+    // 4. LEVEL CLEAR
+    if (ghosts.length === 0) {
+        endLevel();
+    }
+}
+
+// --- RENDER ---
+function draw() {
+    // Clear
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const ts = canvas.width / COLS; // Tile size reale
+
+    // Draw Map
+    ctx.fillStyle = "var(--wall-color)"; // Muri
+    for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+            if (mapDesign[y][x] === 1) {
+                // Disegno muri un po' più carini (con bordo)
+                ctx.fillStyle = "#223";
+                ctx.fillRect(x * ts, y * ts, ts, ts);
+                ctx.strokeStyle = "#00ffff";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x * ts + 4, y * ts + 4, ts - 8, ts - 8);
+            } else {
+                // Dots? No, i puntini sono i fantasmi in questo gioco
+                // ctx.fillStyle = "#333";
+                // ctx.fillRect(x * ts + ts/2 - 1, y * ts + ts/2 - 1, 2, 2);
+            }
         }
+    }
 
-        // 6. Level 4: Audio
-        function doAudio() {
-            const bars = document.querySelectorAll('.bar');
-            bars.forEach((bar, index) => {
-                // Simple CSS animation via JS toggle or simple style
-                bar.style.animation = `bounce 0.5s infinite alternate ${index * 0.1}s`;
-            });
-            
-            document.getElementById('btn-lvl4').style.display = 'none';
-            document.getElementById('btn-next-4').style.display = 'inline-block';
-        }
+    // Draw Ghosts (Sources)
+    ghosts.forEach(g => {
+        const gx = g.x * ts + ts/2;
+        const gy = g.y * ts + ts/2;
+        
+        ctx.fillStyle = g.type.color;
+        
+        // Ghost shape body
+        ctx.beginPath();
+        ctx.arc(gx, gy - 2, ts * 0.4, Math.PI, 0, false);
+        ctx.lineTo(gx + ts*0.4, gy + ts*0.4);
+        ctx.lineTo(gx - ts*0.4, gy + ts*0.4);
+        ctx.fill();
 
-    </script>
+        // Label
+        ctx.fillStyle = "black";
+        ctx.font = `${ts*0.3}px Arial`;
+        ctx.textAlign = "center";
+        ctx.fillText(g.type.label, gx, gy + 2);
+    });
+
+    // Draw Player (Zally)
+    const px = player.x * ts + ts/2;
+    const py = player.y * ts + ts/2;
+
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(player.angle);
+    
+    // Disegna Zally (o Pacman se img fallisce)
+    // Qui disegno sempre Pacman giallo/arancione per sicurezza
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--zalando-orange');
+    ctx.beginPath();
+    // Bocca che si apre/chiude basata sul tempo
+    const mouth = Math.abs(Math.sin(Date.now() / 100)) * 0.2 + 0.05;
+    ctx.arc(0, 0, ts * 0.45, mouth * Math.PI, (2 - mouth) * Math.PI);
+    ctx.lineTo(0, 0);
+    ctx.fill();
+
+    // Se vogliamo l'immagine sopra (sperimentale)
+    // ctx.drawImage(zallyImg, -ts/2, -ts/2, ts, ts);
+
+    ctx.restore();
+
+    requestAnimationFrame(draw);
+}
+
+// --- GAME LOOP ---
+function loop() {
+    update();
+    // Draw è chiamato separatamente da requestAnimationFrame ma sincronizziamo
+}
+
+setInterval(loop, 1000/60); // 60 FPS Logic update
+requestAnimationFrame(draw);
+
+
+// --- STATE MANAGEMENT ---
+
+function startGame() {
+    document.getElementById('start-screen').classList.add('hidden');
+    // Check if mobile
+    if('ontouchstart' in window) {
+        document.getElementById('mobile-controls').style.display = 'flex';
+    }
+    
+    currentLevel = 1;
+    gameState = 'playing';
+    initLevel(1);
+}
+
+function endLevel() {
+    gameState = 'level_transition';
+    const screen = document.getElementById('level-screen');
+    const title = document.getElementById('level-title');
+    const msg = document.getElementById('level-msg');
+    const note = document.getElementById('notebook-visual');
+
+    screen.classList.remove('hidden');
+
+    if (currentLevel === 1) {
+        title.innerHTML = "INGESTION COMPLETE";
+        msg.innerHTML = "Zally ha raccolto tutte le fonti.<br>Ora sono nel sistema.";
+        note.innerHTML = "Generating summary...";
+    } else if (currentLevel === 2) {
+        title.innerHTML = "KNOWLEDGE SYNTHESIZED";
+        msg.innerHTML = "Hai creato una sintesi perfetta dalle fonti confuse.";
+        note.innerHTML = "Creating Q&A Chat...";
+    } else if (currentLevel === 3) {
+        title.innerHTML = "AUDIO READY";
+        msg.innerHTML = "Hai trasformato il testo in un Podcast.";
+        note.innerHTML = "Playing Audio Overview...";
+    }
+}
+
+function nextLevel() {
+    document.getElementById('level-screen').classList.add('hidden');
+    currentLevel++;
+    
+    if (currentLevel > 3) {
+        winGame();
+    } else {
+        gameState = 'playing';
+        initLevel(currentLevel);
+    }
+}
+
+function winGame() {
+    gameState = 'victory';
+    document.getElementById('victory-screen').classList.remove('hidden');
+}
+
+</script>
 </body>
 </html>
