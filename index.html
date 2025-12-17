@@ -139,38 +139,37 @@
         button.primary:hover { background: #ff8533; }
         button.primary:active { box-shadow: 0 0 0 #994000; }
 
-        /* NUOVO STILE PULSANTE START (MEGA BUTTON) */
+        /* MEGA START BUTTON STYLES */
         .btn-mega {
-            background-color: transparent;
+            background: #000;
             color: var(--zalando-orange);
-            border: 4px solid var(--zalando-orange);
-            padding: 20px 40px;
-            font-size: 1.5rem; /* Molto più grande */
+            border: 6px solid var(--zalando-orange);
+            padding: 25px 50px;
+            font-size: 1.2rem;
             font-family: 'Press Start 2P', cursive;
-            text-transform: uppercase;
             cursor: pointer;
-            margin-top: 30px;
-            
-            /* Effetti Neon */
-            box-shadow: 0 0 15px var(--zalando-orange), inset 0 0 15px var(--zalando-orange);
-            text-shadow: 0 0 10px var(--zalando-orange);
-            
-            animation: pulse-neon 1.5s infinite alternate;
-            transition: all 0.2s;
+            margin-top: 40px;
+            position: relative;
+            text-transform: uppercase;
+            box-shadow: 
+                0 0 10px var(--zalando-orange),
+                inset 0 0 20px rgba(255, 105, 0, 0.5);
+            transition: all 0.2s ease-in-out;
+            animation: pulse-glow 2s infinite;
         }
 
         .btn-mega:hover {
-            background-color: var(--zalando-orange);
+            background: var(--zalando-orange);
             color: #000;
-            box-shadow: 0 0 40px var(--zalando-orange);
-            transform: scale(1.1);
+            box-shadow: 0 0 50px var(--zalando-orange);
+            transform: scale(1.05);
         }
 
-        @keyframes pulse-neon {
-            0% { opacity: 0.8; box-shadow: 0 0 10px var(--zalando-orange), inset 0 0 10px var(--zalando-orange); }
-            100% { opacity: 1; box-shadow: 0 0 25px var(--zalando-orange), inset 0 0 25px var(--zalando-orange); }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 10px var(--zalando-orange); }
+            50% { box-shadow: 0 0 30px var(--zalando-orange), 0 0 50px var(--zalando-orange); }
+            100% { box-shadow: 0 0 10px var(--zalando-orange); }
         }
-
 
         /* ARCADE SCREEN */
         #arcade-screen {
@@ -301,18 +300,15 @@
             <canvas id="gameCanvas" width="600" height="600"></canvas>
             
             <div id="start-screen" class="overlay">
-                <h2 style="color:var(--zalando-orange); font-size: 2rem; margin-bottom: 40px;">ZAC-MAN</h2>
+                <h2 style="color:var(--zalando-orange); font-size: 2rem; margin-bottom: 20px;">ZAC-MAN</h2>
                 <div style="margin:20px;">
                      <img src="zally.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 100px; height: 100px; animation: bounce 1s infinite alternate;">
                 </div>
-                <p style="margin-top: 20px;">SEI PRONTO AD IMPARARE?</p>
+                <p style="margin-top: 10px; color: #aaa;">OPERATIONS EDITION</p>
                 
-                <!-- NUOVO PULSANTE START -->
                 <button class="btn-mega" onclick="startGame()">
-                    INSERT COIN<br>
-                    <span style="font-size: 0.6em; display:block; margin-top:10px;">TO START</span>
+                    INSERT COIN
                 </button>
-
             </div>
 
             <div id="level-screen" class="overlay hidden">
@@ -350,7 +346,7 @@
 
 <script>
 /**
- * ZAC-MAN ENGINE - FIXED GHOST AI
+ * ZAC-MAN ENGINE - ROBUST AI EDITION
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -409,7 +405,7 @@ function init() {
 }
 
 function resizeCanvas() {
-    // Keep internal resolution logic
+    // Canvas resolution is fixed 600x600 via HTML props
 }
 
 function initLevel(level) {
@@ -427,19 +423,24 @@ function initLevel(level) {
 
 function spawnGhost(index) {
     let placed = false;
-    while (!placed) {
+    let attempts = 0;
+    while (!placed && attempts < 100) {
         let rx = Math.floor(Math.random() * COLS);
         let ry = Math.floor(Math.random() * ROWS);
+        
+        // Spawn solo in spazi vuoti e lontano dal player
         if (mapDesign[ry][rx] === 0 && (Math.abs(rx - player.x) > 6)) {
             let type = GHOST_TYPES[index % GHOST_TYPES.length];
-            // Valid random start direction
+            
+            // Trova una direzione iniziale valida
             let dirs = [];
             if(mapDesign[ry][rx+1]===0) dirs.push({x:1, y:0});
             if(mapDesign[ry][rx-1]===0) dirs.push({x:-1, y:0});
             if(mapDesign[ry+1][rx]===0) dirs.push({x:0, y:1});
             if(mapDesign[ry-1][rx]===0) dirs.push({x:0, y:-1});
             
-            let startDir = dirs.length > 0 ? dirs[Math.floor(Math.random()*dirs.length)] : {x:0, y:0};
+            // Failsafe: se intrappolato (non dovrebbe succedere), direzione random
+            let startDir = dirs.length > 0 ? dirs[Math.floor(Math.random()*dirs.length)] : {x:1, y:0};
 
             ghosts.push({
                 x: rx, 
@@ -447,11 +448,12 @@ function spawnGhost(index) {
                 type: type,
                 dirX: startDir.x,
                 dirY: startDir.y,
-                speed: 0.1, // Velocità un po' più alta per evitare stalli
+                speed: 0.12, 
                 moving: true
             });
             placed = true;
         }
+        attempts++;
     }
 }
 
@@ -469,7 +471,7 @@ function update() {
     const centerY = Math.floor(player.y + 0.5);
     const dist = Math.abs(player.x - centerX) + Math.abs(player.y - centerY);
 
-    if (dist < 0.2) { // Slightly increased tolerance
+    if (dist < 0.2) { 
         if (player.nextDirX !== 0 || player.nextDirY !== 0) {
             if (!isWall(centerX + player.nextDirX, centerY + player.nextDirY)) {
                 player.x = centerX; player.y = centerY;
@@ -490,45 +492,47 @@ function update() {
     else if (player.dirY === -1) player.angle = -Math.PI/2;
     else if (player.dirY === 1) player.angle = Math.PI/2;
 
-    // 2. GHOST MOVEMENT (Fixed Logic)
+    // 2. GHOST MOVEMENT (IMPROVED AI)
     ghosts.forEach(ghost => {
-        // Current Grid Position
+        // FAILSAFE: Se fermo, riparti a caso
+        if (ghost.dirX === 0 && ghost.dirY === 0) {
+            let dirs = [{x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1}];
+            let pick = dirs[Math.floor(Math.random()*4)];
+            ghost.dirX = pick.x; ghost.dirY = pick.y;
+        }
+
         const gx = Math.floor(ghost.x + 0.5);
         const gy = Math.floor(ghost.y + 0.5);
         const gDist = Math.abs(ghost.x - gx) + Math.abs(ghost.y - gy);
 
-        // Se è al centro della tile
+        // Se siamo al centro della casella, decidiamo il da farsi
         if (gDist < 0.15) {
-            ghost.x = gx; ghost.y = gy; // Snap to center
+            ghost.x = gx; ghost.y = gy; // Snap per evitare drift
             
-            // Possibili direzioni
+            // Calcoliamo dove siamo diretti
+            let nextX = Math.round(ghost.x + ghost.dirX);
+            let nextY = Math.round(ghost.y + ghost.dirY);
+            let blocked = isWall(nextX, nextY);
+
+            // Troviamo tutte le vie di fuga
             let possible = [];
             if (!isWall(gx+1, gy)) possible.push({x:1, y:0});
             if (!isWall(gx-1, gy)) possible.push({x:-1, y:0});
             if (!isWall(gx, gy+1)) possible.push({x:0, y:1});
             if (!isWall(gx, gy-1)) possible.push({x:0, y:-1});
 
-            // Se davanti c'è un muro O decidiamo di girare a caso (10%)
-            let nextTileX = Math.round(ghost.x + ghost.dirX);
-            let nextTileY = Math.round(ghost.y + ghost.dirY);
-            
-            let hitWall = isWall(nextTileX, nextTileY);
-            let randomTurn = Math.random() < 0.1;
-
-            if (hitWall || randomTurn) {
-                // Rimuovi la direzione opposta (reverse) se possibile, per non fare avanti-indietro
+            // Se siamo bloccati O (20% chance) siamo a un incrocio e vogliamo girare
+            if (blocked || (possible.length > 2 && Math.random() < 0.2)) {
+                // Filtra per non tornare indietro subito se possibile
                 let forwardMoves = possible.filter(d => !(d.x === -ghost.dirX && d.y === -ghost.dirY));
                 
                 if (forwardMoves.length > 0) {
                     let pick = forwardMoves[Math.floor(Math.random() * forwardMoves.length)];
                     ghost.dirX = pick.x; ghost.dirY = pick.y;
                 } else if (possible.length > 0) {
-                    // Cul de sac, torna indietro
+                    // Vicolo cieco, torna indietro
                     let pick = possible[0];
                     ghost.dirX = pick.x; ghost.dirY = pick.y;
-                } else {
-                    // Stuck completely? (Should not happen in connected maze)
-                    ghost.dirX = -ghost.dirX; ghost.dirY = -ghost.dirY;
                 }
             }
         }
@@ -542,7 +546,7 @@ function update() {
         const g = ghosts[i];
         const dx = player.x - g.x;
         const dy = player.y - g.y;
-        if (Math.sqrt(dx*dx + dy*dy) < 0.9) { // Generous hitbox
+        if (Math.sqrt(dx*dx + dy*dy) < 0.9) { 
             ghosts.splice(i, 1);
         }
     }
