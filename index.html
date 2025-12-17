@@ -19,14 +19,13 @@
         body {
             background-color: var(--zalando-black);
             color: var(--text-main);
-            /* APPLICO FONT ARCADE OVUNQUE */
             font-family: 'Press Start 2P', cursive; 
             margin: 0;
             padding: 0;
             height: 100vh;
             display: flex;
             overflow: hidden;
-            font-size: 12px; /* Base size ridotto per leggibilità font pixel */
+            font-size: 12px;
         }
 
         /* --- LAYOUT --- */
@@ -36,9 +35,9 @@
             height: 100%;
         }
 
-        /* SIDEBAR (ISTRUZIONI & INFO) */
+        /* SIDEBAR */
         #sidebar {
-            width: 380px; /* Leggermente più larga per il font pixel */
+            width: 380px;
             background-color: var(--sidebar-bg);
             border-right: 4px solid var(--zalando-orange);
             padding: 20px;
@@ -47,7 +46,7 @@
             overflow-y: auto;
             box-shadow: 5px 0 15px rgba(0,0,0,0.5);
             z-index: 100;
-            line-height: 1.8; /* Maggiore interlinea per font pixel */
+            line-height: 1.8;
         }
 
         #game-area {
@@ -61,7 +60,7 @@
             background-size: 20px 20px;
         }
 
-        /* TYPOGRAPHY SIDEBAR */
+        /* TYPOGRAPHY */
         h1 {
             color: var(--zalando-orange);
             font-size: 1.8rem;
@@ -87,26 +86,26 @@
         }
         
         p, li { 
-            font-size: 0.6rem; /* Ridotto per stare nel box */
+            font-size: 0.6rem;
             color: #ccc; 
             margin-bottom: 15px; 
             text-align: justify;
         }
-        strong { color: white; color: var(--zalando-orange); }
+        strong { color: var(--zalando-orange); }
         
         .info-box {
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
-            border: 2px solid #444; /* Bordo pixelato invece che left-bar */
+            border: 2px solid #444;
             margin-bottom: 20px;
             box-shadow: 3px 3px 0px #000;
         }
 
-        /* NAVIGAZIONE ORIZZONTALE */
+        /* NAVIGAZIONE */
         .controls-nav {
             margin-top: auto;
             display: flex;
-            flex-direction: row; /* FORZA ORIZZONTALE */
+            flex-direction: row;
             gap: 10px;
             width: 100%;
             align-items: center;
@@ -122,46 +121,65 @@
             cursor: pointer;
             font-family: 'Press Start 2P', cursive;
             font-size: 0.5rem;
-            flex: 1; /* Distribuisce spazio equamente */
+            flex: 1;
             transition: all 0.1s;
             box-shadow: 0 4px 0 #222;
             text-align: center;
             line-height: 1.4;
         }
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #222;
-        }
+        button:active { transform: translateY(4px); box-shadow: 0 0 0 #222; }
+        button:hover { background: #666; border-color: #aaa; }
         
-        button:hover { 
-            background: #666; 
-            border-color: #aaa; 
-        }
-        
-        /* TASTI ARANCIONI (Primary) */
         button.primary { 
             background: var(--zalando-orange); 
             color: black; 
             border-color: #ff9933;
             box-shadow: 0 4px 0 #994000;
         }
-        button.primary:hover {
-            background: #ff8533;
+        button.primary:hover { background: #ff8533; }
+        button.primary:active { box-shadow: 0 0 0 #994000; }
+
+        /* NUOVO STILE PULSANTE START (MEGA BUTTON) */
+        .btn-mega {
+            background-color: transparent;
+            color: var(--zalando-orange);
+            border: 4px solid var(--zalando-orange);
+            padding: 20px 40px;
+            font-size: 1.5rem; /* Molto più grande */
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 30px;
+            
+            /* Effetti Neon */
+            box-shadow: 0 0 15px var(--zalando-orange), inset 0 0 15px var(--zalando-orange);
+            text-shadow: 0 0 10px var(--zalando-orange);
+            
+            animation: pulse-neon 1.5s infinite alternate;
+            transition: all 0.2s;
         }
-        button.primary:active {
-            box-shadow: 0 0 0 #994000;
+
+        .btn-mega:hover {
+            background-color: var(--zalando-orange);
+            color: #000;
+            box-shadow: 0 0 40px var(--zalando-orange);
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse-neon {
+            0% { opacity: 0.8; box-shadow: 0 0 10px var(--zalando-orange), inset 0 0 10px var(--zalando-orange); }
+            100% { opacity: 1; box-shadow: 0 0 25px var(--zalando-orange), inset 0 0 25px var(--zalando-orange); }
         }
 
 
-        /* ARCADE CABINET STYLE */
+        /* ARCADE SCREEN */
         #arcade-screen {
             position: relative;
             border: 10px solid #333;
-            border-radius: 4px; /* Meno round per look pixel */
+            border-radius: 4px;
             box-shadow: 0 0 40px rgba(255, 105, 0, 0.2);
             background: black;
             overflow: hidden;
-            /* Aspect ratio fix */
             width: 600px;
             height: 600px;
             max-width: 95vw;
@@ -170,7 +188,7 @@
 
         canvas { display: block; width: 100%; height: 100%; }
 
-        /* GAME OVERLAYS */
+        /* OVERLAYS */
         .overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -189,18 +207,16 @@
             font-size: 1.2rem; 
             color: var(--neon-blue); 
             margin-bottom: 30px; 
-            line-height: 1.6;
             text-shadow: 2px 2px var(--zalando-orange);
         }
         
-        /* Box Lezioni - Centrato ma con testo spostato a dx */
         .lesson-box {
             border: 4px double white; 
-            padding: 20px 20px 20px 40px; /* Più padding a sinistra */
+            padding: 20px 20px 20px 40px;
             margin: 20px 0; 
             background: #111;
             width: 90%;
-            text-align: left; /* Testo a bandiera a sx */
+            text-align: left;
             line-height: 1.8;
             font-size: 0.6rem;
             color: #ddd;
@@ -214,10 +230,9 @@
             margin-bottom: 20px;
         }
         
-        /* Pulsanti Overlay Orizzontali Larghi */
         .overlay button.primary {
             width: auto;
-            min-width: 200px; /* Belli larghi */
+            min-width: 200px;
             font-size: 0.8rem;
             padding: 15px;
             margin-top: 20px;
@@ -245,19 +260,17 @@
             box-shadow: 0 4px 0 rgba(0,0,0,0.5);
         }
         .d-btn:active { background: var(--zalando-orange); transform: translateY(4px); box-shadow: none; }
-
     </style>
 </head>
 <body>
 
 <div id="main-wrapper">
     
-    <!-- SIDEBAR: INFORMAZIONI E CONTROLLI -->
+    <!-- SIDEBAR -->
     <div id="sidebar">
         <h1>ZAC-MAN</h1>
         <div class="subtitle">OPERATIONS EDITION</div>
 
-        <!-- SEZIONE 1: COS'È NOTEBOOKLM -->
         <div class="info-box">
             <h2>Cos'e' NotebookLM?</h2>
             <p><strong>NOTE:</strong> Non e' un plugin. E' una Web App esterna.</p>
@@ -265,7 +278,6 @@
             <p style="font-size:0.5rem; color:#666; margin-top:10px;">URL: notebooklm.google.com</p>
         </div>
 
-        <!-- SEZIONE 2: MISSIONE -->
         <div class="info-box">
             <h2>Missione</h2>
             <p>Il Drive e' pieno di <strong>Fantasmi</strong> (Documenti).</p>
@@ -276,7 +288,6 @@
             </ul>
         </div>
 
-        <!-- NAVIGAZIONE -->
         <div class="controls-nav">
             <button onclick="prevLevel()">&lt; PREV</button>
             <button onclick="resetGame()">RESET</button>
@@ -289,30 +300,30 @@
         <div id="arcade-screen">
             <canvas id="gameCanvas" width="600" height="600"></canvas>
             
-            <!-- START SCREEN -->
             <div id="start-screen" class="overlay">
-                <h2 style="color:var(--zalando-orange);">START GAME</h2>
+                <h2 style="color:var(--zalando-orange); font-size: 2rem; margin-bottom: 40px;">ZAC-MAN</h2>
                 <div style="margin:20px;">
-                     <!-- Zally Placeholder -->
-                     <img src="zally.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 80px; height: 80px; animation: bounce 1s infinite alternate;">
+                     <img src="zally.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 100px; height: 100px; animation: bounce 1s infinite alternate;">
                 </div>
-                <p>PREMI START PER INIZIARE</p>
-                <button class="primary" onclick="startGame()">START</button>
+                <p style="margin-top: 20px;">SEI PRONTO AD IMPARARE?</p>
+                
+                <!-- NUOVO PULSANTE START -->
+                <button class="btn-mega" onclick="startGame()">
+                    INSERT COIN<br>
+                    <span style="font-size: 0.6em; display:block; margin-top:10px;">TO START</span>
+                </button>
+
             </div>
 
-            <!-- LEVEL COMPLETE SCREEN -->
             <div id="level-screen" class="overlay hidden">
                 <h2 id="level-title">LEVEL CLEARED!</h2>
                 <p id="level-msg">...</p>
-                
                 <div class="lesson-box">
                     <p id="level-lesson" style="color: #00ffff; margin:0;">...</p>
                 </div>
-                
                 <button class="primary" onclick="nextLevel()">NEXT FEATURE &gt;&gt;</button>
             </div>
 
-            <!-- VICTORY SCREEN -->
             <div id="victory-screen" class="overlay hidden">
                 <h2 style="color: var(--zalando-orange);">MISSION COMPLETED!</h2>
                 <p>CAOS OPERATIVO DOMATO.</p>
@@ -325,7 +336,6 @@
                 <button class="primary" onclick="resetGame()">GIOCA ANCORA</button>
             </div>
 
-            <!-- TOUCH CONTROLS -->
             <div id="mobile-controls">
                 <div class="d-btn" ontouchstart="handleTouch('up')">▲</div>
                 <div class="d-row">
@@ -340,7 +350,7 @@
 
 <script>
 /**
- * ZAC-MAN ENGINE - PIXEL PERFECT EDITION
+ * ZAC-MAN ENGINE - FIXED GHOST AI
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -350,7 +360,7 @@ let animationId;
 // --- CONFIG ---
 const COLS = 20;
 const ROWS = 20;
-let tileSize = 30; // Dynamic resizing will handle this
+const TILE_SIZE = 30; 
 
 // --- STATE ---
 let gameState = 'start'; 
@@ -358,7 +368,7 @@ let currentLevel = 1;
 let ghosts = [];
 let player = { x: 1, y: 1, dirX: 0, dirY: 0, nextDirX: 0, nextDirY: 0, speed: 0.15, angle: 0 };
 
-// --- MAPPA (1=Muro, 0=Vuoto) ---
+// 1=Muro, 0=Vuoto
 const mapDesign = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
@@ -392,22 +402,14 @@ const GHOST_TYPES = [
 // --- INIT ---
 function init() {
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // Initial call
     requestAnimationFrame(gameLoop);
-    
-    // Check mobile
     if('ontouchstart' in window) {
         document.getElementById('mobile-controls').style.display = 'flex';
     }
 }
 
 function resizeCanvas() {
-    // Keep internal resolution consistent but allow CSS to scale
-    // Canvas resolution is 600x600 as defined in HTML
-    const container = document.getElementById('arcade-screen');
-    // Ensure container is square-ish
-    // let size = Math.min(container.clientWidth, container.clientHeight);
-    // container.style.height = size + 'px'; // Enforce square aspect via CSS if needed
+    // Keep internal resolution logic
 }
 
 function initLevel(level) {
@@ -430,17 +432,23 @@ function spawnGhost(index) {
         let ry = Math.floor(Math.random() * ROWS);
         if (mapDesign[ry][rx] === 0 && (Math.abs(rx - player.x) > 6)) {
             let type = GHOST_TYPES[index % GHOST_TYPES.length];
-            let dirs = [{x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1}];
-            let startDir = dirs[Math.floor(Math.random()*4)];
+            // Valid random start direction
+            let dirs = [];
+            if(mapDesign[ry][rx+1]===0) dirs.push({x:1, y:0});
+            if(mapDesign[ry][rx-1]===0) dirs.push({x:-1, y:0});
+            if(mapDesign[ry+1][rx]===0) dirs.push({x:0, y:1});
+            if(mapDesign[ry-1][rx]===0) dirs.push({x:0, y:-1});
             
+            let startDir = dirs.length > 0 ? dirs[Math.floor(Math.random()*dirs.length)] : {x:0, y:0};
+
             ghosts.push({
                 x: rx, 
                 y: ry, 
                 type: type,
                 dirX: startDir.x,
                 dirY: startDir.y,
-                speed: 0.08, 
-                lastMoveTime: 0
+                speed: 0.1, // Velocità un po' più alta per evitare stalli
+                moving: true
             });
             placed = true;
         }
@@ -461,7 +469,7 @@ function update() {
     const centerY = Math.floor(player.y + 0.5);
     const dist = Math.abs(player.x - centerX) + Math.abs(player.y - centerY);
 
-    if (dist < 0.15) { 
+    if (dist < 0.2) { // Slightly increased tolerance
         if (player.nextDirX !== 0 || player.nextDirY !== 0) {
             if (!isWall(centerX + player.nextDirX, centerY + player.nextDirY)) {
                 player.x = centerX; player.y = centerY;
@@ -476,40 +484,55 @@ function update() {
     player.x += player.dirX * player.speed;
     player.y += player.dirY * player.speed;
     
+    // Angle
     if (player.dirX === 1) player.angle = 0;
-    if (player.dirX === -1) player.angle = Math.PI;
-    if (player.dirY === -1) player.angle = -Math.PI/2;
-    if (player.dirY === 1) player.angle = Math.PI/2;
+    else if (player.dirX === -1) player.angle = Math.PI;
+    else if (player.dirY === -1) player.angle = -Math.PI/2;
+    else if (player.dirY === 1) player.angle = Math.PI/2;
 
-    // 2. GHOST AI MOVEMENT
+    // 2. GHOST MOVEMENT (Fixed Logic)
     ghosts.forEach(ghost => {
+        // Current Grid Position
         const gx = Math.floor(ghost.x + 0.5);
         const gy = Math.floor(ghost.y + 0.5);
         const gDist = Math.abs(ghost.x - gx) + Math.abs(ghost.y - gy);
 
-        if (gDist < 0.1) {
-            ghost.x = gx; ghost.y = gy;
-            let nextX = Math.round(ghost.x + ghost.dirX);
-            let nextY = Math.round(ghost.y + ghost.dirY);
+        // Se è al centro della tile
+        if (gDist < 0.15) {
+            ghost.x = gx; ghost.y = gy; // Snap to center
             
-            if (isWall(nextX, nextY) || Math.random() < 0.1) {
-                let possible = [];
-                if (!isWall(gx+1, gy)) possible.push({x:1, y:0});
-                if (!isWall(gx-1, gy)) possible.push({x:-1, y:0});
-                if (!isWall(gx, gy+1)) possible.push({x:0, y:1});
-                if (!isWall(gx, gy-1)) possible.push({x:0, y:-1});
+            // Possibili direzioni
+            let possible = [];
+            if (!isWall(gx+1, gy)) possible.push({x:1, y:0});
+            if (!isWall(gx-1, gy)) possible.push({x:-1, y:0});
+            if (!isWall(gx, gy+1)) possible.push({x:0, y:1});
+            if (!isWall(gx, gy-1)) possible.push({x:0, y:-1});
+
+            // Se davanti c'è un muro O decidiamo di girare a caso (10%)
+            let nextTileX = Math.round(ghost.x + ghost.dirX);
+            let nextTileY = Math.round(ghost.y + ghost.dirY);
+            
+            let hitWall = isWall(nextTileX, nextTileY);
+            let randomTurn = Math.random() < 0.1;
+
+            if (hitWall || randomTurn) {
+                // Rimuovi la direzione opposta (reverse) se possibile, per non fare avanti-indietro
+                let forwardMoves = possible.filter(d => !(d.x === -ghost.dirX && d.y === -ghost.dirY));
                 
-                let forward = possible.filter(d => !(d.x === -ghost.dirX && d.y === -ghost.dirY));
-                
-                if (forward.length > 0) {
-                    let pick = forward[Math.floor(Math.random() * forward.length)];
+                if (forwardMoves.length > 0) {
+                    let pick = forwardMoves[Math.floor(Math.random() * forwardMoves.length)];
                     ghost.dirX = pick.x; ghost.dirY = pick.y;
                 } else if (possible.length > 0) {
+                    // Cul de sac, torna indietro
                     let pick = possible[0];
                     ghost.dirX = pick.x; ghost.dirY = pick.y;
+                } else {
+                    // Stuck completely? (Should not happen in connected maze)
+                    ghost.dirX = -ghost.dirX; ghost.dirY = -ghost.dirY;
                 }
             }
         }
+        
         ghost.x += ghost.dirX * ghost.speed;
         ghost.y += ghost.dirY * ghost.speed;
     });
@@ -519,7 +542,7 @@ function update() {
         const g = ghosts[i];
         const dx = player.x - g.x;
         const dy = player.y - g.y;
-        if (Math.sqrt(dx*dx + dy*dy) < 0.8) {
+        if (Math.sqrt(dx*dx + dy*dy) < 0.9) { // Generous hitbox
             ghosts.splice(i, 1);
         }
     }
