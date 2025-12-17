@@ -346,7 +346,7 @@
 
 <script>
 /**
- * ZAC-MAN ENGINE - ROBUST AI EDITION
+ * ZAC-MAN ENGINE - TARGET BASED MOVEMENT
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -432,24 +432,16 @@ function spawnGhost(index) {
         if (mapDesign[ry][rx] === 0 && (Math.abs(rx - player.x) > 6)) {
             let type = GHOST_TYPES[index % GHOST_TYPES.length];
             
-            // Trova una direzione iniziale valida
-            let dirs = [];
-            if(mapDesign[ry][rx+1]===0) dirs.push({x:1, y:0});
-            if(mapDesign[ry][rx-1]===0) dirs.push({x:-1, y:0});
-            if(mapDesign[ry+1][rx]===0) dirs.push({x:0, y:1});
-            if(mapDesign[ry-1][rx]===0) dirs.push({x:0, y:-1});
-            
-            // Failsafe: se intrappolato (non dovrebbe succedere), direzione random
-            let startDir = dirs.length > 0 ? dirs[Math.floor(Math.random()*dirs.length)] : {x:1, y:0};
-
+            // Per il sistema Target, inizializziamo target = posizione attuale
             ghosts.push({
                 x: rx, 
                 y: ry, 
+                targetX: rx,
+                targetY: ry,
+                dirX: 0,
+                dirY: 0,
                 type: type,
-                dirX: startDir.x,
-                dirY: startDir.y,
-                speed: 0.12, 
-                moving: true
+                speed: 0.05 + (0.01 * currentLevel) // Slow but steady
             });
             placed = true;
         }
@@ -492,53 +484,58 @@ function update() {
     else if (player.dirY === -1) player.angle = -Math.PI/2;
     else if (player.dirY === 1) player.angle = Math.PI/2;
 
-    // 2. GHOST MOVEMENT (IMPROVED AI)
+    // 2. GHOST MOVEMENT (TARGET BASED - INFALLIBLE)
     ghosts.forEach(ghost => {
-        // FAILSAFE: Se fermo, riparti a caso
-        if (ghost.dirX === 0 && ghost.dirY === 0) {
-            let dirs = [{x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1}];
-            let pick = dirs[Math.floor(Math.random()*4)];
-            ghost.dirX = pick.x; ghost.dirY = pick.y;
-        }
+        // Calcola distanza dal target
+        const dx = ghost.targetX - ghost.x;
+        const dy = ghost.targetY - ghost.y;
+        const distToTarget = Math.sqrt(dx*dx + dy*dy);
 
-        const gx = Math.floor(ghost.x + 0.5);
-        const gy = Math.floor(ghost.y + 0.5);
-        const gDist = Math.abs(ghost.x - gx) + Math.abs(ghost.y - gy);
-
-        // Se siamo al centro della casella, decidiamo il da farsi
-        if (gDist < 0.15) {
-            ghost.x = gx; ghost.y = gy; // Snap per evitare drift
+        // Se siamo molto vicini al target (o ci siamo sopra), scegliamo il prossimo
+        if (distToTarget <= ghost.speed) {
+            // Snap esatto alla tile per evitare drift
+            ghost.x = ghost.targetX;
+            ghost.y = ghost.targetY;
             
-            // Calcoliamo dove siamo diretti
-            let nextX = Math.round(ghost.x + ghost.dirX);
-            let nextY = Math.round(ghost.y + ghost.dirY);
-            let blocked = isWall(nextX, nextY);
-
-            // Troviamo tutte le vie di fuga
+            // Dove possiamo andare da qui?
+            const gx = ghost.x;
+            const gy = ghost.y;
             let possible = [];
-            if (!isWall(gx+1, gy)) possible.push({x:1, y:0});
-            if (!isWall(gx-1, gy)) possible.push({x:-1, y:0});
-            if (!isWall(gx, gy+1)) possible.push({x:0, y:1});
-            if (!isWall(gx, gy-1)) possible.push({x:0, y:-1});
 
-            // Se siamo bloccati O (20% chance) siamo a un incrocio e vogliamo girare
-            if (blocked || (possible.length > 2 && Math.random() < 0.2)) {
-                // Filtra per non tornare indietro subito se possibile
-                let forwardMoves = possible.filter(d => !(d.x === -ghost.dirX && d.y === -ghost.dirY));
+            if (!isWall(gx+1, gy)) possible.push({x: gx+1, y: gy, dx: 1, dy: 0});
+            if (!isWall(gx-1, gy)) possible.push({x: gx-1, y: gy, dx: -1, dy: 0});
+            if (!isWall(gx, gy+1)) possible.push({x: gx, y: gy+1, dx: 0, dy: 1});
+            if (!isWall(gx, gy-1)) possible.push({x: gx, y: gy-1, dx: 0, dy: -1});
+
+            if (possible.length > 0) {
+                // Filtra per non tornare indietro immediatamente (se possibile)
+                // Usiamo ghost.dirX/Y per sapere da dove veniamo
+                let forward = possible.filter(p => !(p.dx === -ghost.dirX && p.dy === -ghost.dirY));
                 
-                if (forwardMoves.length > 0) {
-                    let pick = forwardMoves[Math.floor(Math.random() * forwardMoves.length)];
-                    ghost.dirX = pick.x; ghost.dirY = pick.y;
-                } else if (possible.length > 0) {
+                let chosen;
+                if (forward.length > 0) {
+                     // Scegli a caso tra le opzioni "avanti"
+                    chosen = forward[Math.floor(Math.random() * forward.length)];
+                } else {
                     // Vicolo cieco, torna indietro
-                    let pick = possible[0];
-                    ghost.dirX = pick.x; ghost.dirY = pick.y;
+                    chosen = possible[0];
                 }
+                
+                // Imposta nuovo target
+                ghost.targetX = chosen.x;
+                ghost.targetY = chosen.y;
+                ghost.dirX = chosen.dx;
+                ghost.dirY = chosen.dy;
+            } else {
+                // Intrappolato (non dovrebbe succedere)
             }
+            
+        } else {
+            // Muoviti verso il target
+            // Usiamo Math.sign per avere -1, 0, o 1 puliti
+            ghost.x += Math.sign(dx) * ghost.speed;
+            ghost.y += Math.sign(dy) * ghost.speed;
         }
-        
-        ghost.x += ghost.dirX * ghost.speed;
-        ghost.y += ghost.dirY * ghost.speed;
     });
 
     // 3. EATING
