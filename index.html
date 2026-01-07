@@ -330,7 +330,7 @@
                 <p>HAI SUPERATO L'ESECUZIONE.</p>
                 <div class="lesson-box" style="border-color: var(--neon-purple);">
                     <p>ORA SEI UN <strong>CREATOR</strong>.</p>
-                    <p>Hai trasformato dati grezzi in Podcast, Idee e Strategie.</p>
+                    <p>Dati grezzi &rarr; Idee Strategiche.</p>
                     <p style="margin-top:10px; color:#fff;">NotebookLM + Tu = 🚀</p>
                 </div>
                 <button class="primary" onclick="resetGame()">GIOCA ANCORA</button>
@@ -350,12 +350,11 @@
 
 <script>
 /**
- * ZAC-MAN ENGINE - V3.0 (CREATIVE FINALE)
+ * ZAC-MAN ENGINE - V3.1 (BUGFIX DUPLICATE)
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let animationId;
 
 // --- CONFIG ---
 const COLS = 20;
@@ -367,7 +366,7 @@ let gameState = 'start';
 let currentLevel = 1;
 let ghosts = [];
 let player = { x: 1, y: 1, dirX: 0, dirY: 0, nextDirX: 0, nextDirY: 0, speed: 0.15, angle: 0 };
-let colorCycle = 0; // Per effetto arcobaleno livello finale
+let colorCycle = 0; 
 
 // 1=Muro, 0=Vuoto
 const mapDesign = [
@@ -411,14 +410,14 @@ const GHOST_SETS = {
         { name: "LINK", color: "#00ffff", label: "[3]" }
     ],
     4: [ // Team Collaboration
-        { name: "USER", color: "#bd00ff", label: "USR" }, // Purple
+        { name: "USER", color: "#bd00ff", label: "USR" }, 
         { name: "TEAM", color: "#bd00ff", label: "TEAM" },
         { name: "SHARE", color: "#bd00ff", label: "SHR" }
     ],
     5: [ // Creativity (Rainbow Mode)
-        { name: "POD", color: "#ff00ff", label: "POD" },   // Podcast
-        { name: "MIND", color: "#00ff00", label: "MIND" }, // Mind Map
-        { name: "SLIDE", color: "#ffffff", label: "PPT" }  // Slides
+        { name: "POD", color: "#ff00ff", label: "POD" },   
+        { name: "MIND", color: "#00ff00", label: "MIND" }, 
+        { name: "SLIDE", color: "#ffffff", label: "PPT" }  
     ]
 };
 
@@ -432,7 +431,7 @@ function init() {
 }
 
 function resizeCanvas() {
-    // Canvas resolution fixed
+    // Fixed resolution logic
 }
 
 function initLevel(level) {
@@ -441,10 +440,9 @@ function initLevel(level) {
     player.nextDirX = 0; player.nextDirY = 0;
 
     ghosts = [];
-    let count = 2 + level; // Piu' livelli = piu' items
-    if(level === 5) count = 6; // Bonus stage pieno di idee!
+    let count = 2 + level; 
+    if(level === 5) count = 6; 
     
-    // Get correct types for this level, or fallback
     let types = GHOST_SETS[level] || GHOST_SETS[1];
 
     for (let i = 0; i < count; i++) {
@@ -487,7 +485,6 @@ function isWall(x, y) {
 function update() {
     if (gameState !== 'playing') return;
 
-    // Color cycle for Level 5
     if (currentLevel === 5) {
         colorCycle += 2;
     }
@@ -512,7 +509,6 @@ function update() {
     player.x += player.dirX * player.speed;
     player.y += player.dirY * player.speed;
     
-    // Angle
     if (player.dirX === 1) player.angle = 0;
     else if (player.dirX === -1) player.angle = Math.PI;
     else if (player.dirY === -1) player.angle = -Math.PI/2;
@@ -576,18 +572,15 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const ts = canvas.width / COLS;
 
-    // Map Drawing
-    // Level 5 has Rainbow Walls
     let wallColor = "#333";
-    let borderColor = "#ff6900"; // Zalando Orange default
+    let borderColor = "#ff6900"; 
     
     if (currentLevel === 5) {
-        // Rainbow effect logic
         borderColor = `hsl(${colorCycle % 360}, 100%, 50%)`;
         wallColor = "#222";
     }
 
-    ctx.fillStyle = "#2c3e50"; // unused background
+    ctx.fillStyle = "#2c3e50"; 
     for (let y=0; y<ROWS; y++) {
         for (let x=0; x<COLS; x++) {
             if (mapDesign[y][x] === 1) {
@@ -606,7 +599,6 @@ function draw() {
         let gy = g.y * ts + ts/2;
         ctx.fillStyle = g.type.color;
         
-        // Level 5 Ghosts pulse
         if (currentLevel === 5) {
              let pulse = Math.sin(Date.now()/100) * 2;
              gx += pulse; gy += pulse;
@@ -679,7 +671,6 @@ function endLevel() {
 
     screen.classList.remove('hidden');
 
-    // TEXT LOGIC PER LIVELLO
     if (currentLevel === 1) {
         title.innerHTML = "L1: CENTRALIZZAZIONE";
         msg.innerHTML = "Fonti acquisite.";
@@ -698,9 +689,11 @@ function endLevel() {
         msg.innerHTML = "Silos abbattuti.";
         lesson.innerHTML = "<strong>FEATURE: CONDIVISIONE</strong><br><br>NotebookLM non è solo tuo. Condividilo col team. Il sapere diventa collettivo.";
     } else if (currentLevel === 5) {
-        // Questo porta alla vittoria, quindi gestito in nextLevel o qui direttamente
-        // Ma per coerenza mostriamo lo screen finale
-        title.innerHTML = "L5: CREATIVITÀ";
+        // CORRETTO: ORA HA UN TESTO UNICO
+        title.innerHTML = "L5: AUDIO OVERVIEW";
+        title.style.color = "#ff00ff";
+        msg.innerHTML = "Hai ascoltato i dati.";
+        lesson.innerHTML = "<strong>FEATURE: PODCAST AI</strong><br><br>Genera una conversazione audio tra due host AI sui tuoi documenti. Ideale per imparare mentre vai al lavoro.";
     }
 }
 
