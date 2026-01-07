@@ -350,11 +350,15 @@
 
 <script>
 /**
- * ZAC-MAN ENGINE - V3.1 (BUGFIX DUPLICATE)
+ * ZAC-MAN ENGINE - ZALLY HEAD EDITION
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
+// LOAD ZALLY SPRITE
+const zallySprite = new Image();
+zallySprite.src = 'zally.png'; // Make sure this file exists in repo!
 
 // --- CONFIG ---
 const COLS = 20;
@@ -615,18 +619,34 @@ function draw() {
         ctx.fillText(g.type.label, gx, gy+4);
     });
 
-    // Player
+    // Player (ZALLY HEAD WITH MOUTH ANIMATION)
     let px = player.x * ts + ts/2;
     let py = player.y * ts + ts/2;
     ctx.save();
     ctx.translate(px, py);
     ctx.rotate(player.angle);
+    
+    // 1. Draw Orange Circle as base (safe fallback)
     ctx.fillStyle = "#ff6900";
     ctx.beginPath();
+    ctx.arc(0, 0, ts*0.45, 0, Math.PI*2);
+    ctx.fill();
+
+    // 2. Draw Zally Image
+    try {
+        ctx.drawImage(zallySprite, -ts/2, -ts/2, ts, ts);
+    } catch(e) { /* Fallback */ }
+
+    // 3. The "Chomp" Mask
+    // We draw a BLACK wedge over the face to simulate the mouth opening
     let mouth = Math.abs(Math.sin(Date.now()/100)) * 0.2 + 0.05;
-    ctx.arc(0, 0, ts*0.45, mouth*Math.PI, (2-mouth)*Math.PI);
+    ctx.fillStyle = "#000"; // Same as background
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.arc(0, 0, ts, -mouth * Math.PI, mouth * Math.PI);
     ctx.lineTo(0,0);
     ctx.fill();
+
     ctx.restore();
 }
 
