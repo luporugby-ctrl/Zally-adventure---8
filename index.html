@@ -673,27 +673,26 @@ function endLevel() {
 
     if (currentLevel === 1) {
         title.innerHTML = "L1: CENTRALIZZAZIONE";
-        msg.innerHTML = "Fonti acquisite.";
-        lesson.innerHTML = "<strong>FEATURE: MULTIMODAL SOURCE</strong><br><br>PDF, Slide, Link Web, Testo copiato. Metti tutto dentro.";
+        msg.innerHTML = "Ordine ristabilito nel caos dei file.";
+        lesson.innerHTML = "<strong>FEATURE: MULTIMODAL SOURCE</strong><br><br>Basta saltare da un tab all'altro. Carica PDF, Google Slides, Doc e Link Web in un unico Notebook. Ora hai una singola fonte di verita' su cui lavorare.";
     } else if (currentLevel === 2) {
         title.innerHTML = "L2: SINTESI";
-        msg.innerHTML = "Rumore ridotto.";
-        lesson.innerHTML = "<strong>FEATURE: SUMMARY</strong><br><br>Ottieni la Big Picture in secondi. Perfetto per Onboarding e Policy.";
+        msg.innerHTML = "Informazioni chiave estratte.";
+        lesson.innerHTML = "<strong>FEATURE: SUMMARY & TOPICS</strong><br><br>Hai un manuale di 50 pagine? NotebookLM lo legge per te in un istante. Ottieni riassunti automatici e i temi principali per capire subito di cosa si parla, senza perdere ore.";
     } else if (currentLevel === 3) {
         title.innerHTML = "L3: VERIFICA";
-        msg.innerHTML = "Grounding OK.";
-        lesson.innerHTML = "<strong>FEATURE: CITAZIONI [1]</strong><br><br>Fidati ma verifica. Clicca il numero per vedere la fonte originale.";
+        msg.innerHTML = "Allucinazioni bloccate. Dati verificati.";
+        lesson.innerHTML = "<strong>FEATURE: GROUNDING (CITAZIONI)</strong><br><br>L'AI puo' inventare, ma NotebookLM ti protegge. Ogni risposta ha dei piccoli numeri [1]. Cliccali per evidenziare la frase ESATTA nel documento originale da cui proviene l'info. Fiducia totale.";
     } else if (currentLevel === 4) {
         title.innerHTML = "L4: TEAMWORK";
         title.style.color = "#bd00ff";
-        msg.innerHTML = "Silos abbattuti.";
-        lesson.innerHTML = "<strong>FEATURE: CONDIVISIONE</strong><br><br>NotebookLM non è solo tuo. Condividilo col team. Il sapere diventa collettivo.";
+        msg.innerHTML = "La conoscenza ora e' di tutti.";
+        lesson.innerHTML = "<strong>FEATURE: CONDIVISIONE NOTEBOOK</strong><br><br>Non tenerti le scoperte per te. Condividi il Notebook come un qualsiasi file Drive (Viewer o Editor). Trasforma il lavoro del singolo in un super-cervello collettivo per tutto il team Ops.";
     } else if (currentLevel === 5) {
-        // CORRETTO: ORA HA UN TESTO UNICO
         title.innerHTML = "L5: AUDIO OVERVIEW";
         title.style.color = "#ff00ff";
-        msg.innerHTML = "Hai ascoltato i dati.";
-        lesson.innerHTML = "<strong>FEATURE: PODCAST AI</strong><br><br>Genera una conversazione audio tra due host AI sui tuoi documenti. Ideale per imparare mentre vai al lavoro.";
+        msg.innerHTML = "Hai trasformato la lettura in ascolto.";
+        lesson.innerHTML = "<strong>FEATURE: AUDIO OVERVIEW</strong><br><br>Stanco di leggere? Genera un vero Podcast con due host AI che discutono dei tuoi file. Perfetto per ripassare processi complessi mentre sei in metro o fai altro.";
     }
 }
 
