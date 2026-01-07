@@ -93,6 +93,19 @@
         }
         strong { color: var(--zalando-orange); }
         
+        /* Link custom style */
+        a {
+            color: var(--zalando-orange);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--zalando-orange);
+            transition: all 0.2s;
+        }
+        a:hover {
+            color: #fff;
+            border-bottom: 1px solid #fff;
+            text-shadow: 0 0 5px var(--zalando-orange);
+        }
+        
         .info-box {
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
@@ -274,7 +287,8 @@
             <h2>Cos'e' NotebookLM?</h2>
             <p><strong>NOTE:</strong> Non e' un plugin. E' una Web App esterna.</p>
             <p>E' il tuo <strong>Research Assistant</strong>. Carica PDF, Slide o Link e lui diventa un esperto istantaneo.</p>
-            <p style="font-size:0.5rem; color:#666; margin-top:10px;">URL: notebooklm.google.com</p>
+            <!-- LINK CLICCABILE QUI SOTTO -->
+            <p style="font-size:0.5rem; color:#666; margin-top:10px;">URL: <a href="https://notebooklm.google.com" target="_blank">notebooklm.google.com</a></p>
         </div>
 
         <div class="info-box">
