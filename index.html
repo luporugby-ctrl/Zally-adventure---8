@@ -185,7 +185,7 @@
             100% { box-shadow: 0 0 10px var(--zalando-orange); }
         }
 
-        /* ARCADE SCREEN */
+        /* ARCADE SCREEN - MAXIMIZED */
         #arcade-screen {
             position: relative;
             border: 10px solid #333;
@@ -193,10 +193,12 @@
             box-shadow: 0 0 40px rgba(255, 105, 0, 0.2);
             background: black;
             overflow: hidden;
-            width: 600px;
-            height: 600px;
-            max-width: 95vw;
+            width: 85vh; 
+            height: 85vh;
+            max-width: 95vw; 
             max-height: 95vw;
+            min-width: 300px;
+            min-height: 300px;
         }
 
         canvas { display: block; width: 100%; height: 100%; }
@@ -217,7 +219,7 @@
         .hidden { display: none !important; }
 
         .overlay h2 { 
-            font-size: 1.2rem; 
+            font-size: 1.5rem; 
             color: var(--neon-blue); 
             margin-bottom: 30px; 
             text-shadow: 2px 2px var(--zalando-orange);
@@ -225,18 +227,18 @@
         
         .lesson-box {
             border: 4px double white; 
-            padding: 20px 20px 20px 40px;
+            padding: 20px 30px;
             margin: 20px 0; 
             background: #111;
-            width: 90%;
+            width: 80%;
             text-align: left;
             line-height: 1.8;
-            font-size: 0.6rem;
+            font-size: 0.8rem;
             color: #ddd;
         }
 
         .overlay p { 
-            font-size: 0.7rem; 
+            font-size: 0.9rem; 
             color: #fff; 
             max-width: 90%; 
             line-height: 1.8; 
@@ -245,9 +247,9 @@
         
         .overlay button.primary {
             width: auto;
-            min-width: 200px;
-            font-size: 0.8rem;
-            padding: 15px;
+            min-width: 250px;
+            font-size: 1rem;
+            padding: 20px;
             margin-top: 20px;
         }
 
@@ -308,13 +310,13 @@
     <!-- AREA GIOCO -->
     <div id="game-area">
         <div id="arcade-screen">
-            <canvas id="gameCanvas" width="600" height="600"></canvas>
+            <canvas id="gameCanvas" width="800" height="800"></canvas>
             
             <div id="start-screen" class="overlay">
-                <h2 style="color:var(--zalando-orange); font-size: 2rem; margin-bottom: 20px;">ZAC-MAN</h2>
+                <h2 style="color:var(--zalando-orange); font-size: 3rem; margin-bottom: 30px;">ZAC-MAN</h2>
                 <div style="margin:20px;">
-                     <!-- ZACMAN ICON ON START SCREEN (Aggiornato a .png) -->
-                     <img src="zacman.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 100px; height: 100px; animation: bounce 1s infinite alternate; object-fit: contain; border-radius:50%;">
+                     <!-- ZACMAN ICON: RESIZED TO 250px -->
+                     <img src="zacman.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 250px; height: 250px; animation: bounce 1s infinite alternate; object-fit: contain; border-radius:50%;">
                 </div>
                 <p style="margin-top: 10px; color: #aaa;">OPERATIONS EDITION</p>
                 <button class="btn-mega" onclick="startGame()">INSERT COIN</button>
@@ -330,7 +332,7 @@
             </div>
 
             <div id="victory-screen" class="overlay hidden">
-                <h2 style="color: var(--neon-purple); font-size: 1.5rem; text-shadow: 2px 2px #fff;">CREATIVITY UNLOCKED!</h2>
+                <h2 style="color: var(--neon-purple); font-size: 2rem; text-shadow: 2px 2px #fff;">CREATIVITY UNLOCKED!</h2>
                 <p>HAI SUPERATO L'ESECUZIONE.</p>
                 <div class="lesson-box" style="border-color: var(--neon-purple);">
                     <p>ORA SEI UN <strong>CREATOR</strong>.</p>
@@ -354,8 +356,7 @@
 
 <script>
 /**
- * ZAC-MAN ENGINE - V3.2
- * FIXED: Image Loading Logic (.png instead of .jpg)
+ * ZAC-MAN ENGINE - V3.4 BIG ZALLY EDITION
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -363,7 +364,7 @@ const ctx = canvas.getContext('2d');
 
 // LOAD ZACMAN SPRITE (PNG)
 const zacmanSprite = new Image();
-zacmanSprite.src = 'zacman.png'; // Updated to match uploaded file extension
+zacmanSprite.src = 'zacman.png'; 
 
 // --- CONFIG ---
 const COLS = 20;
@@ -440,7 +441,7 @@ function init() {
 }
 
 function resizeCanvas() {
-    // Fixed resolution logic
+    // Fixed resolution logic handled by CSS
 }
 
 function initLevel(level) {
@@ -631,24 +632,22 @@ function draw() {
     ctx.translate(px, py);
     ctx.rotate(player.angle);
     
-    // Draw ZACMAN
+    // Draw ZACMAN IN GAME
+    let drawSize = ts * 1.3; // 30% Bigger than the tile
+    let offset = drawSize / 2;
+
     try {
-        // Disegna sempre l'immagine se disponibile, altrimenti fallback
-        ctx.drawImage(zacmanSprite, -ts/2, -ts/2, ts, ts);
-        
-        // Se l'immagine non è ancora caricata, disegna il cerchio arancione SOTTO
-        // (Nota: in Canvas drawImage fallisce silenziosamente o non disegna nulla se non caricata)
-        // Possiamo controllare zacmanSprite.complete per decidere
+        if(zacmanSprite.complete && zacmanSprite.naturalWidth > 0) {
+            ctx.drawImage(zacmanSprite, -offset, -offset, drawSize, drawSize);
+        } else {
+            // Fallback Circle
+            ctx.fillStyle = "#ff6900";
+            ctx.beginPath(); ctx.arc(0, 0, ts*0.5, 0, Math.PI*2); ctx.fill(); 
+        }
     } catch(e) { 
-        // Fallback palla arancione
+        // Fallback Circle
         ctx.fillStyle = "#ff6900";
-        ctx.beginPath(); ctx.arc(0, 0, ts*0.45, 0, Math.PI*2); ctx.fill(); 
-    }
-    
-    // Per sicurezza aggiuntiva, se l'immagine non è 'complete', disegna palla
-    if (!zacmanSprite.complete || zacmanSprite.naturalWidth === 0) {
-         ctx.fillStyle = "#ff6900";
-         ctx.beginPath(); ctx.arc(0, 0, ts*0.45, 0, Math.PI*2); ctx.fill(); 
+        ctx.beginPath(); ctx.arc(0, 0, ts*0.5, 0, Math.PI*2); ctx.fill(); 
     }
 
     ctx.restore();
