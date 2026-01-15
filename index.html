@@ -10,6 +10,8 @@
             --zalando-orange: #ff6900;
             --zalando-black: #1a1a1a;
             --neon-blue: #00ffff;
+            --neon-pink: #ff00ff;
+            --neon-green: #39ff14;
             --text-main: #ffffff;
             --sidebar-bg: #222;
         }
@@ -302,8 +304,8 @@
             <div id="start-screen" class="overlay">
                 <h2 style="color:var(--zalando-orange); font-size: 2rem; margin-bottom: 20px;">ZAC-MAN</h2>
                 <div style="margin:20px;">
-                     <!-- ZALLY PLACEHOLDER - Replace src with your zally.png -->
-                     <img src="zally.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 100px; height: 100px; animation: bounce 1s infinite alternate;">
+                     <!-- ZACMAN IMAGE RESTORED - Make sure file is named zacman.png -->
+                     <img src="zacman.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 100px; height: 100px; animation: bounce 1s infinite alternate;">
                 </div>
                 <p style="margin-top: 10px; color: #aaa;">OPERATIONS EDITION</p>
                 
@@ -321,7 +323,6 @@
                 <button class="primary" onclick="nextLevel()">NEXT FEATURE &gt;&gt;</button>
             </div>
 
-            <!-- SCHERMATA VITTORIA AGGIORNATA -->
             <div id="victory-screen" class="overlay hidden">
                 <h2 style="color: var(--zalando-orange); font-size: 1.5rem; margin-bottom: 20px;">HAI FATTO IL RESTYLING AL CAOS!</h2>
                 
@@ -333,15 +334,15 @@
                 <div class="lesson-box" style="border-color: var(--zalando-orange); text-align: center; padding: 15px;">
                     <p style="margin-bottom: 15px; color: var(--zalando-orange);">IL TUO NUOVO TOOLKIT:</p>
                     <p>🧠 <strong>Cervello:</strong> Sintesi immediate</p>
-                    <p>👁️ <strong>Occhio:</strong> Mappe & Slide</p>
-                    <p>🎧 <strong>Voce:</strong> Audio Overview</p>
+                    <p>👁️ <strong>Occhio:</strong> Mappe & Infografiche</p>
+                    <p>🎬 <strong>Regia:</strong> Script Video & Audio</p>
                 </div>
                 
                 <p style="font-size: 0.7rem; color: #aaa; margin-top: 10px; font-style: italic;">
                     "Dati grezzi in entrata.<br>Strategia pura in uscita."
                 </p>
                 
-                <button class="primary" onclick="resetGame()">NUOVA PARTITA</button>
+                <button class="primary" onclick="resetGame()">GIOCA ANCORA</button>
             </div>
 
             <div id="mobile-controls">
@@ -675,8 +676,9 @@ function endLevel() {
     } else if (currentLevel === 4) {
         // LEZIONE 4: MULTIMODALE (AGGIORNATA: SPRINT & FANTASIA)
         title.innerHTML = "FANTASIA AL POTERE!";
+        title.style.color = "var(--neon-pink)";
         msg.innerHTML = "Oltre il testo: dai voce e colore ai dati.";
-        lesson.innerHTML = "<strong>LESSON 4: MULTIMODAL CREATIVITY</strong><br><br>Non solo leggere: <strong>Ascolta</strong> i report in metro (Audio), <strong>Visualizza</strong> i problemi (Mappe), <strong>Incanta</strong> il team (Slide). I dati non devono essere noiosi per essere utili. Libera la fantasia.";
+        lesson.innerHTML = "<strong style='color:var(--neon-green);'>LESSON 4: MULTIMODAL CREATIVITY</strong><br><br>Non solo leggere: <strong>Ascolta</strong> i report (Audio), crea <strong>Mappe Mentali</strong> per visualizzare i concetti e chiedi <strong>Script per Video</strong> o Infografiche. Trasforma le slide noiose in uno show.";
     }
 }
 
