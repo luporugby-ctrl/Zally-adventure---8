@@ -10,8 +10,6 @@
             --zalando-orange: #ff6900;
             --zalando-black: #1a1a1a;
             --neon-blue: #00ffff;
-            --neon-purple: #bd00ff;
-            --neon-green: #00ff00;
             --text-main: #ffffff;
             --sidebar-bg: #222;
         }
@@ -95,18 +93,6 @@
         }
         strong { color: var(--zalando-orange); }
         
-        a {
-            color: var(--zalando-orange);
-            text-decoration: none;
-            border-bottom: 1px dotted var(--zalando-orange);
-            transition: all 0.2s;
-        }
-        a:hover {
-            color: #fff;
-            border-bottom: 1px solid #fff;
-            text-shadow: 0 0 5px var(--zalando-orange);
-        }
-        
         .info-box {
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
@@ -185,7 +171,7 @@
             100% { box-shadow: 0 0 10px var(--zalando-orange); }
         }
 
-        /* ARCADE SCREEN - MAXIMIZED */
+        /* ARCADE SCREEN */
         #arcade-screen {
             position: relative;
             border: 10px solid #333;
@@ -193,12 +179,10 @@
             box-shadow: 0 0 40px rgba(255, 105, 0, 0.2);
             background: black;
             overflow: hidden;
-            width: 85vh; 
-            height: 85vh;
-            max-width: 95vw; 
+            width: 600px;
+            height: 600px;
+            max-width: 95vw;
             max-height: 95vw;
-            min-width: 300px;
-            min-height: 300px;
         }
 
         canvas { display: block; width: 100%; height: 100%; }
@@ -219,7 +203,7 @@
         .hidden { display: none !important; }
 
         .overlay h2 { 
-            font-size: 1.5rem; 
+            font-size: 1.2rem; 
             color: var(--neon-blue); 
             margin-bottom: 30px; 
             text-shadow: 2px 2px var(--zalando-orange);
@@ -227,18 +211,18 @@
         
         .lesson-box {
             border: 4px double white; 
-            padding: 20px 30px;
+            padding: 20px 20px 20px 40px;
             margin: 20px 0; 
             background: #111;
-            width: 80%;
+            width: 90%;
             text-align: left;
             line-height: 1.8;
-            font-size: 0.8rem;
+            font-size: 0.6rem;
             color: #ddd;
         }
 
         .overlay p { 
-            font-size: 0.9rem; 
+            font-size: 0.7rem; 
             color: #fff; 
             max-width: 90%; 
             line-height: 1.8; 
@@ -247,9 +231,9 @@
         
         .overlay button.primary {
             width: auto;
-            min-width: 250px;
-            font-size: 1rem;
-            padding: 20px;
+            min-width: 200px;
+            font-size: 0.8rem;
+            padding: 15px;
             margin-top: 20px;
         }
 
@@ -290,14 +274,17 @@
             <h2>Cos'e' NotebookLM?</h2>
             <p><strong>NOTE:</strong> Non e' un plugin. E' una Web App esterna.</p>
             <p>E' il tuo <strong>Research Assistant</strong>. Carica PDF, Slide o Link e lui diventa un esperto istantaneo.</p>
-            <p style="font-size:0.5rem; color:#666; margin-top:10px;">URL: <a href="https://notebooklm.google.com" target="_blank">notebooklm.google.com</a></p>
+            <p style="font-size:0.5rem; color:#666; margin-top:10px;">URL: notebooklm.google.com</p>
         </div>
 
         <div class="info-box">
             <h2>Missione</h2>
-            <p><strong>Challenge 1-3:</strong> Centralizza, Sintetizza, Verifica.</p>
-            <p><strong>Challenge 4:</strong> Condividi col Team.</p>
-            <p><strong>Finale:</strong> Sblocca la Creativita' (Podcast, Mind Maps).</p>
+            <p>Il Drive e' pieno di <strong>Fantasmi</strong> (Documenti).</p>
+            <ul>
+                <li>Usa le Frecce.</li>
+                <li>Mangia le Fonti.</li>
+                <li>Sblocca le Lezioni.</li>
+            </ul>
         </div>
 
         <div class="controls-nav">
@@ -310,16 +297,19 @@
     <!-- AREA GIOCO -->
     <div id="game-area">
         <div id="arcade-screen">
-            <canvas id="gameCanvas" width="800" height="800"></canvas>
+            <canvas id="gameCanvas" width="600" height="600"></canvas>
             
             <div id="start-screen" class="overlay">
-                <h2 style="color:var(--zalando-orange); font-size: 3rem; margin-bottom: 30px;">ZAC-MAN</h2>
+                <h2 style="color:var(--zalando-orange); font-size: 2rem; margin-bottom: 20px;">ZAC-MAN</h2>
                 <div style="margin:20px;">
-                     <!-- ZACMAN ICON: RESIZED TO 250px -->
-                     <img src="zacman.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 250px; height: 250px; animation: bounce 1s infinite alternate; object-fit: contain; border-radius:50%;">
+                     <!-- ZALLY PLACEHOLDER - Replace src with your zally.png -->
+                     <img src="zally.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmNjkwMCIvPjwvc3ZnPg=='" style="width: 100px; height: 100px; animation: bounce 1s infinite alternate;">
                 </div>
                 <p style="margin-top: 10px; color: #aaa;">OPERATIONS EDITION</p>
-                <button class="btn-mega" onclick="startGame()">INSERT COIN</button>
+                
+                <button class="btn-mega" onclick="startGame()">
+                    INSERT COIN
+                </button>
             </div>
 
             <div id="level-screen" class="overlay hidden">
@@ -331,15 +321,27 @@
                 <button class="primary" onclick="nextLevel()">NEXT FEATURE &gt;&gt;</button>
             </div>
 
+            <!-- SCHERMATA VITTORIA AGGIORNATA -->
             <div id="victory-screen" class="overlay hidden">
-                <h2 style="color: var(--neon-purple); font-size: 2rem; text-shadow: 2px 2px #fff;">CREATIVITY UNLOCKED!</h2>
-                <p>HAI SUPERATO L'ESECUZIONE.</p>
-                <div class="lesson-box" style="border-color: var(--neon-purple);">
-                    <p>ORA SEI UN <strong>CREATOR</strong>.</p>
-                    <p>Dati grezzi &rarr; Idee Strategiche.</p>
-                    <p style="margin-top:10px; color:#fff;">NotebookLM + Tu = 🚀</p>
+                <h2 style="color: var(--zalando-orange); font-size: 1.5rem; margin-bottom: 20px;">HAI FATTO IL RESTYLING AL CAOS!</h2>
+                
+                <p style="font-size: 0.8rem; line-height: 1.5; margin-bottom: 20px;">
+                    Non sei più solo un "Operator".<br>
+                    Sei un <span style="color: var(--neon-blue);">KNOWLEDGE DESIGNER</span>.
+                </p>
+                
+                <div class="lesson-box" style="border-color: var(--zalando-orange); text-align: center; padding: 15px;">
+                    <p style="margin-bottom: 15px; color: var(--zalando-orange);">IL TUO NUOVO TOOLKIT:</p>
+                    <p>🧠 <strong>Cervello:</strong> Sintesi immediate</p>
+                    <p>👁️ <strong>Occhio:</strong> Mappe & Slide</p>
+                    <p>🎧 <strong>Voce:</strong> Audio Overview</p>
                 </div>
-                <button class="primary" onclick="resetGame()">GIOCA ANCORA</button>
+                
+                <p style="font-size: 0.7rem; color: #aaa; margin-top: 10px; font-style: italic;">
+                    "Dati grezzi in entrata.<br>Strategia pura in uscita."
+                </p>
+                
+                <button class="primary" onclick="resetGame()">NUOVA PARTITA</button>
             </div>
 
             <div id="mobile-controls">
@@ -356,15 +358,12 @@
 
 <script>
 /**
- * ZAC-MAN ENGINE - V3.4 BIG ZALLY EDITION
+ * ZAC-MAN ENGINE - TARGET BASED MOVEMENT (ROBUST)
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-
-// LOAD ZACMAN SPRITE (PNG)
-const zacmanSprite = new Image();
-zacmanSprite.src = 'zacman.png'; 
+let animationId;
 
 // --- CONFIG ---
 const COLS = 20;
@@ -376,7 +375,6 @@ let gameState = 'start';
 let currentLevel = 1;
 let ghosts = [];
 let player = { x: 1, y: 1, dirX: 0, dirY: 0, nextDirX: 0, nextDirY: 0, speed: 0.15, angle: 0 };
-let colorCycle = 0; 
 
 // 1=Muro, 0=Vuoto
 const mapDesign = [
@@ -402,34 +400,14 @@ const mapDesign = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-// Definition of Ghost Types per Level
-const GHOST_SETS = {
-    1: [ // Sources
-        { name: "PDF", color: "#e74c3c", label: "PDF" },
-        { name: "DOC", color: "#3498db", label: "DOC" },
-        { name: "WEB", color: "#2ecc71", label: "WEB" }
-    ],
-    2: [ // Summaries
-        { name: "KEY", color: "#f1c40f", label: "KEY" },
-        { name: "SUM", color: "#f1c40f", label: "SUM" },
-        { name: "TLDR", color: "#f1c40f", label: "TLDR" }
-    ],
-    3: [ // Grounding
-        { name: "LINK", color: "#00ffff", label: "[1]" },
-        { name: "LINK", color: "#00ffff", label: "[2]" },
-        { name: "LINK", color: "#00ffff", label: "[3]" }
-    ],
-    4: [ // Team Collaboration
-        { name: "USER", color: "#bd00ff", label: "USR" }, 
-        { name: "TEAM", color: "#bd00ff", label: "TEAM" },
-        { name: "SHARE", color: "#bd00ff", label: "SHR" }
-    ],
-    5: [ // Creativity (Rainbow Mode)
-        { name: "POD", color: "#ff00ff", label: "POD" },   
-        { name: "MIND", color: "#00ff00", label: "MIND" }, 
-        { name: "SLIDE", color: "#ffffff", label: "PPT" }  
-    ]
-};
+// UPDATED GHOST TYPES based on Guide
+const GHOST_TYPES = [
+    { name: "PDF", color: "#e74c3c", label: "PDF" },
+    { name: "DOC", color: "#3498db", label: "DOC" },
+    { name: "WEB", color: "#2ecc71", label: "WEB" },
+    { name: "SLIDE", color: "#f1c40f", label: "SLIDE" },
+    { name: "YT", color: "#9b59b6", label: "YT" }
+];
 
 // --- INIT ---
 function init() {
@@ -441,7 +419,7 @@ function init() {
 }
 
 function resizeCanvas() {
-    // Fixed resolution logic handled by CSS
+    // Canvas resolution is fixed 600x600 via HTML props
 }
 
 function initLevel(level) {
@@ -451,25 +429,24 @@ function initLevel(level) {
 
     ghosts = [];
     let count = 2 + level; 
-    if(level === 5) count = 6; 
     
-    let types = GHOST_SETS[level] || GHOST_SETS[1];
-
     for (let i = 0; i < count; i++) {
-        spawnGhost(i, types);
+        spawnGhost(i);
     }
 }
 
-function spawnGhost(index, types) {
+function spawnGhost(index) {
     let placed = false;
     let attempts = 0;
     while (!placed && attempts < 100) {
         let rx = Math.floor(Math.random() * COLS);
         let ry = Math.floor(Math.random() * ROWS);
         
+        // Spawn solo in spazi vuoti e lontano dal player
         if (mapDesign[ry][rx] === 0 && (Math.abs(rx - player.x) > 6)) {
-            let type = types[index % types.length];
+            let type = GHOST_TYPES[index % GHOST_TYPES.length];
             
+            // Per il sistema Target, inizializziamo target = posizione attuale
             ghosts.push({
                 x: rx, 
                 y: ry, 
@@ -478,7 +455,7 @@ function spawnGhost(index, types) {
                 dirX: 0,
                 dirY: 0,
                 type: type,
-                speed: 0.08 + (0.01 * currentLevel) 
+                speed: 0.05 + (0.01 * currentLevel) // Slow but steady
             });
             placed = true;
         }
@@ -494,10 +471,6 @@ function isWall(x, y) {
 
 function update() {
     if (gameState !== 'playing') return;
-
-    if (currentLevel === 5) {
-        colorCycle += 2;
-    }
 
     // 1. PLAYER MOVEMENT
     const centerX = Math.floor(player.x + 0.5);
@@ -519,21 +492,26 @@ function update() {
     player.x += player.dirX * player.speed;
     player.y += player.dirY * player.speed;
     
+    // Angle
     if (player.dirX === 1) player.angle = 0;
     else if (player.dirX === -1) player.angle = Math.PI;
     else if (player.dirY === -1) player.angle = -Math.PI/2;
     else if (player.dirY === 1) player.angle = Math.PI/2;
 
-    // 2. GHOST MOVEMENT (Target System)
+    // 2. GHOST MOVEMENT (TARGET BASED - INFALLIBLE)
     ghosts.forEach(ghost => {
+        // Calcola distanza dal target
         const dx = ghost.targetX - ghost.x;
         const dy = ghost.targetY - ghost.y;
         const distToTarget = Math.sqrt(dx*dx + dy*dy);
 
+        // Se siamo molto vicini al target (o ci siamo sopra), scegliamo il prossimo
         if (distToTarget <= ghost.speed) {
+            // Snap esatto alla tile per evitare drift
             ghost.x = ghost.targetX;
             ghost.y = ghost.targetY;
             
+            // Dove possiamo andare da qui?
             const gx = ghost.x;
             const gy = ghost.y;
             let possible = [];
@@ -544,20 +522,30 @@ function update() {
             if (!isWall(gx, gy-1)) possible.push({x: gx, y: gy-1, dx: 0, dy: -1});
 
             if (possible.length > 0) {
+                // Filtra per non tornare indietro immediatamente (se possibile)
+                // Usiamo ghost.dirX/Y per sapere da dove veniamo
                 let forward = possible.filter(p => !(p.dx === -ghost.dirX && p.dy === -ghost.dirY));
                 
                 let chosen;
                 if (forward.length > 0) {
+                     // Scegli a caso tra le opzioni "avanti"
                     chosen = forward[Math.floor(Math.random() * forward.length)];
                 } else {
+                    // Vicolo cieco, torna indietro
                     chosen = possible[0];
                 }
+                
+                // Imposta nuovo target
                 ghost.targetX = chosen.x;
                 ghost.targetY = chosen.y;
                 ghost.dirX = chosen.dx;
                 ghost.dirY = chosen.dy;
+            } else {
+                // Intrappolato (non dovrebbe succedere)
             }
+            
         } else {
+            // Muoviti verso il target
             ghost.x += Math.sign(dx) * ghost.speed;
             ghost.y += Math.sign(dy) * ghost.speed;
         }
@@ -582,22 +570,15 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const ts = canvas.width / COLS;
 
-    let wallColor = "#333";
-    let borderColor = "#ff6900"; 
-    
-    if (currentLevel === 5) {
-        borderColor = `hsl(${colorCycle % 360}, 100%, 50%)`;
-        wallColor = "#222";
-    }
-
-    ctx.fillStyle = "#2c3e50"; 
+    // Map
+    ctx.fillStyle = "#2c3e50";
     for (let y=0; y<ROWS; y++) {
         for (let x=0; x<COLS; x++) {
             if (mapDesign[y][x] === 1) {
-                ctx.fillStyle = wallColor;
+                ctx.fillStyle = "#333";
                 ctx.fillRect(x*ts, y*ts, ts, ts);
-                ctx.strokeStyle = borderColor;
-                ctx.lineWidth = currentLevel === 5 ? 2 : 1;
+                ctx.strokeStyle = "var(--zalando-orange)";
+                ctx.lineWidth = 1;
                 ctx.strokeRect(x*ts+4, y*ts+4, ts-8, ts-8);
             }
         }
@@ -608,48 +589,29 @@ function draw() {
         let gx = g.x * ts + ts/2;
         let gy = g.y * ts + ts/2;
         ctx.fillStyle = g.type.color;
-        
-        if (currentLevel === 5) {
-             let pulse = Math.sin(Date.now()/100) * 2;
-             gx += pulse; gy += pulse;
-        }
-
         ctx.beginPath();
         ctx.arc(gx, gy-2, ts*0.4, Math.PI, 0, false);
         ctx.lineTo(gx+ts*0.4, gy+ts*0.4);
         ctx.lineTo(gx-ts*0.4, gy+ts*0.4);
         ctx.fill();
         ctx.fillStyle = "black";
-        ctx.font = "bold 9px Arial";
+        ctx.font = "bold 10px Arial";
         ctx.textAlign = "center";
         ctx.fillText(g.type.label, gx, gy+4);
     });
 
-    // Player (ZACMAN SPRITE)
+    // Player
     let px = player.x * ts + ts/2;
     let py = player.y * ts + ts/2;
     ctx.save();
     ctx.translate(px, py);
     ctx.rotate(player.angle);
-    
-    // Draw ZACMAN IN GAME
-    let drawSize = ts * 1.3; // 30% Bigger than the tile
-    let offset = drawSize / 2;
-
-    try {
-        if(zacmanSprite.complete && zacmanSprite.naturalWidth > 0) {
-            ctx.drawImage(zacmanSprite, -offset, -offset, drawSize, drawSize);
-        } else {
-            // Fallback Circle
-            ctx.fillStyle = "#ff6900";
-            ctx.beginPath(); ctx.arc(0, 0, ts*0.5, 0, Math.PI*2); ctx.fill(); 
-        }
-    } catch(e) { 
-        // Fallback Circle
-        ctx.fillStyle = "#ff6900";
-        ctx.beginPath(); ctx.arc(0, 0, ts*0.5, 0, Math.PI*2); ctx.fill(); 
-    }
-
+    ctx.fillStyle = "#ff6900";
+    ctx.beginPath();
+    let mouth = Math.abs(Math.sin(Date.now()/100)) * 0.2 + 0.05;
+    ctx.arc(0, 0, ts*0.45, mouth*Math.PI, (2-mouth)*Math.PI);
+    ctx.lineTo(0,0);
+    ctx.fill();
     ctx.restore();
 }
 
@@ -685,6 +647,7 @@ function prevLevel() {
     }
 }
 
+// --- SPECIFIC LESSON OUTCOMES ---
 function endLevel() {
     gameState = 'level_transition';
     const screen = document.getElementById('level-screen');
@@ -695,34 +658,32 @@ function endLevel() {
     screen.classList.remove('hidden');
 
     if (currentLevel === 1) {
-        title.innerHTML = "L1: CENTRALIZZAZIONE";
-        msg.innerHTML = "Ordine ristabilito nel caos dei file.";
-        lesson.innerHTML = "<strong>FEATURE: MULTIMODAL SOURCE</strong><br><br>Basta saltare da un tab all'altro. Carica PDF, Google Slides, Doc e Link Web in un unico Notebook. Ora hai una singola fonte di verita' su cui lavorare.";
+        // LEZIONE 1: INGESTION (FONTI)
+        title.innerHTML = "FONTI ACQUISITE!";
+        msg.innerHTML = "Hai centralizzato la conoscenza.";
+        lesson.innerHTML = "<strong>LESSON 1: VARIETA' DELLE FONTI</strong><br><br>NotebookLM supporta fino a 50 fonti: PDF, Google Doc, Slide, Link Web, Testo copiato, Audio e YouTube. È la tua 'Single Source of Truth' per ogni progetto.";
     } else if (currentLevel === 2) {
-        title.innerHTML = "L2: SINTESI";
-        msg.innerHTML = "Informazioni chiave estratte.";
-        lesson.innerHTML = "<strong>FEATURE: SUMMARY & TOPICS</strong><br><br>Hai un manuale di 50 pagine? NotebookLM lo legge per te in un istante. Ottieni riassunti automatici e i temi principali per capire subito di cosa si parla, senza perdere ore.";
+        // LEZIONE 2: GROUNDING & CHAT
+        title.innerHTML = "VERIFICA COMPLETATA!";
+        msg.innerHTML = "Hai eliminato le allucinazioni.";
+        lesson.innerHTML = "<strong>LESSON 2: GROUNDING & CITAZIONI</strong><br><br>La chat risponde SOLO basandosi sulle tue fonti. Ogni risposta ha numeri [1] cliccabili (citazioni) che ti portano al passaggio esatto del documento originale.";
     } else if (currentLevel === 3) {
-        title.innerHTML = "L3: VERIFICA";
-        msg.innerHTML = "Allucinazioni bloccate. Dati verificati.";
-        lesson.innerHTML = "<strong>FEATURE: GROUNDING (CITAZIONI)</strong><br><br>L'AI puo' inventare, ma NotebookLM ti protegge. Ogni risposta ha dei piccoli numeri [1]. Cliccali per evidenziare la frase ESATTA nel documento originale da cui proviene l'info. Fiducia totale.";
+        // LEZIONE 3: ELABORAZIONE (NOTE & SINTESI)
+        title.innerHTML = "SINTESI CREATA!";
+        msg.innerHTML = "Hai trasformato i dati in valore.";
+        lesson.innerHTML = "<strong>LESSON 3: FORMATI DI OUTPUT</strong><br><br>Non solo chat: salva le risposte come Note. Chiedi a NotebookLM di creare per te FAQ, Briefing Doc, Tabelle Cronologiche o Guide allo Studio basate sulle tue fonti.";
     } else if (currentLevel === 4) {
-        title.innerHTML = "L4: TEAMWORK";
-        title.style.color = "#bd00ff";
-        msg.innerHTML = "La conoscenza ora e' di tutti.";
-        lesson.innerHTML = "<strong>FEATURE: CONDIVISIONE NOTEBOOK</strong><br><br>Non tenerti le scoperte per te. Condividi il Notebook come un qualsiasi file Drive (Viewer o Editor). Trasforma il lavoro del singolo in un super-cervello collettivo per tutto il team Ops.";
-    } else if (currentLevel === 5) {
-        title.innerHTML = "L5: AUDIO OVERVIEW";
-        title.style.color = "#ff00ff";
-        msg.innerHTML = "Hai trasformato la lettura in ascolto.";
-        lesson.innerHTML = "<strong>FEATURE: AUDIO OVERVIEW</strong><br><br>Stanco di leggere? Genera un vero Podcast con due host AI che discutono dei tuoi file. Perfetto per ripassare processi complessi mentre sei in metro o fai altro.";
+        // LEZIONE 4: MULTIMODALE (AGGIORNATA: SPRINT & FANTASIA)
+        title.innerHTML = "FANTASIA AL POTERE!";
+        msg.innerHTML = "Oltre il testo: dai voce e colore ai dati.";
+        lesson.innerHTML = "<strong>LESSON 4: MULTIMODAL CREATIVITY</strong><br><br>Non solo leggere: <strong>Ascolta</strong> i report in metro (Audio), <strong>Visualizza</strong> i problemi (Mappe), <strong>Incanta</strong> il team (Slide). I dati non devono essere noiosi per essere utili. Libera la fantasia.";
     }
 }
 
 function nextLevel() {
     document.getElementById('level-screen').classList.add('hidden');
     currentLevel++;
-    if (currentLevel > 5) {
+    if (currentLevel > 4) { // Now 4 levels
         document.getElementById('victory-screen').classList.remove('hidden');
     } else {
         gameState = 'playing';
